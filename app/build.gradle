@@ -32,4 +32,5 @@ dependencies {
     implementation 'com.flipboard:bottomsheet-core:1.5.3'
     implementation 'com.flipboard:bottomsheet-commons:1.5.3'
     implementation 'com.takisoft.fix:preference-v7:26.1.0.3'
+    implementation 'pub.devrel:easypermissions:3.0.0'
 }

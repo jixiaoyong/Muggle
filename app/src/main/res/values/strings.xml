@@ -187,4 +187,6 @@
     <!--test content-->
     <string name="test_long_title">这是一个标题，一个非常长的标题，长到看不到尽头，真的特别长，后面的根本看不到，后面还有很多内容你根本就看不到的，不信再看</string>
     <string name="test_long_content">这是一段文章摘要，一段非常长的文章摘要，一样是长到没有尽头，到底是有多长呢，你继续往后看就知道有多长了，我不知道写什么了，就这样看看可不可以吧，要是不可以那就再长一点</string>
+
+    <string name="no_write_sdcard_permission">请给予存储权限，否则无法保存文件</string>
 </resources>

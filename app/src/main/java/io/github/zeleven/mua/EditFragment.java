@@ -1,9 +1,11 @@
 package io.github.zeleven.mua;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
 import org.greenrobot.eventbus.EventBus;
@@ -20,26 +23,45 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
+import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 
-public class EditFragment extends BaseEditorFragment implements View.OnClickListener {
-    @BindView(R.id.content_input) EditText contentInput;
-    @BindString(R.string.app_name) String appName;
+public class EditFragment extends BaseEditorFragment implements View.OnClickListener, EasyPermissions.PermissionCallbacks {
 
-    @BindView(R.id.heading) ImageButton headingBtn;
-    @BindView(R.id.bold) ImageButton boldBtn;
-    @BindView(R.id.italic) ImageButton italicBtn;
-    @BindView(R.id.code) ImageButton blockCodeBtn;
-    @BindView(R.id.quote) ImageButton quoteBtn;
-    @BindView(R.id.list_number) ImageButton listNumberBtn;
-    @BindView(R.id.list_bullet) ImageButton listBulletBtn;
-    @BindView(R.id.link) ImageButton linkBtn;
-    @BindView(R.id.image) ImageButton imageBtn;
+    private static final int REQUEST_WRITE_ES = 1;
 
-    @BindString(R.string.dialog_item_text_local_image) String localImage;
-    @BindString(R.string.dialog_item_text_internet_image) String internetImage;
+    @BindView(R.id.content_input)
+    EditText contentInput;
+    @BindString(R.string.app_name)
+    String appName;
+
+    @BindView(R.id.heading)
+    ImageButton headingBtn;
+    @BindView(R.id.bold)
+    ImageButton boldBtn;
+    @BindView(R.id.italic)
+    ImageButton italicBtn;
+    @BindView(R.id.code)
+    ImageButton blockCodeBtn;
+    @BindView(R.id.quote)
+    ImageButton quoteBtn;
+    @BindView(R.id.list_number)
+    ImageButton listNumberBtn;
+    @BindView(R.id.list_bullet)
+    ImageButton listBulletBtn;
+    @BindView(R.id.link)
+    ImageButton linkBtn;
+    @BindView(R.id.image)
+    ImageButton imageBtn;
+
+    @BindString(R.string.dialog_item_text_local_image)
+    String localImage;
+    @BindString(R.string.dialog_item_text_internet_image)
+    String internetImage;
 
     private String rootPath;
     private EditorAction editorAction;
@@ -95,38 +117,14 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                             Toast.LENGTH_SHORT).show();
                     break;
                 }
+                if (!EasyPermissions.hasPermissions(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    PermissionRequest request = new PermissionRequest.Builder(this,
+                            REQUEST_WRITE_ES, Manifest.permission.WRITE_EXTERNAL_STORAGE).build();
+                    EasyPermissions.requestPermissions(request);
+                    break;
+                }
                 if (!saved) {
-                    AlertDialog.Builder saveDialog = new AlertDialog.Builder(context);
-                    saveDialog.setTitle(R.string.dialog_title_save_file);
-
-                    LayoutInflater inflater = context.getLayoutInflater();
-                    final View view = inflater.inflate(R.layout.dialog_save_file, null);
-                    final EditText fileNameET = view.findViewById(R.id.file_name);
-
-                    saveDialog.setView(view);
-                    saveDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    saveDialog.setPositiveButton(R.string.dialog_btn_save,
-                            new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            fileName = fileNameET.getText().toString();
-                            filePath = rootPath + fileName + ".md";
-                            new SaveFileTask(context, filePath, fileName,
-                                    contentInput.getText().toString(), new SaveFileTask.Response() {
-                                @Override
-                                public void taskFinish(Boolean result) {
-                                    saved = result; // change saved value to true if save success
-                                }
-                            }).execute();
-                        }
-                    });
-
-                    saveDialog.show();
+                    showSaveDialog();
                 } else {
                     editorAction.update(filePath);
                 }
@@ -146,21 +144,21 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                     renameDialog.setView(view);
                     renameDialog.setNegativeButton(R.string.cancel,
                             new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
                     renameDialog.setPositiveButton(R.string.dialog_btn_rename,
                             new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            fileName = fileNameET.getText().toString();
-                            FileUtils.renameFile(context, new File(filePath),
-                                    new File(rootPath + fileName + ".md"));
-                            filePath = rootPath + fileName + ".md";
-                        }
-                    });
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    fileName = fileNameET.getText().toString();
+                                    FileUtils.renameFile(context, new File(filePath),
+                                            new File(rootPath + fileName + ".md"));
+                                    filePath = rootPath + fileName + ".md";
+                                }
+                            });
                     renameDialog.show();
                 }
                 break;
@@ -189,6 +187,40 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSaveDialog() {
+        AlertDialog.Builder saveDialog = new AlertDialog.Builder(context);
+        saveDialog.setTitle(R.string.dialog_title_save_file);
+
+        LayoutInflater inflater = context.getLayoutInflater();
+        final View view = inflater.inflate(R.layout.dialog_save_file, null);
+        final EditText fileNameET = view.findViewById(R.id.file_name);
+
+        saveDialog.setView(view);
+        saveDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        saveDialog.setPositiveButton(R.string.dialog_btn_save,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        fileName = fileNameET.getText().toString();
+                        filePath = rootPath + fileName + ".md";
+                        new SaveFileTask(context, filePath, fileName,
+                                contentInput.getText().toString(), new SaveFileTask.Response() {
+                            @Override
+                            public void taskFinish(Boolean result) {
+                                saved = result; // change saved value to true if save success
+                            }
+                        }).execute();
+                    }
+                });
+
+        saveDialog.show();
     }
 
     @Override
@@ -365,5 +397,27 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
         if (refresh) {
             EventBus.getDefault().post(new ContentChangedEvent(contentInput.getText().toString()));
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_WRITE_ES) {
+            showSaveDialog();
+        }
+        Log.d("TAG", "GET PERMISSION " + requestCode);
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if (requestCode == REQUEST_WRITE_ES) {
+            Toast.makeText(requireContext(), getString(R.string.no_write_sdcard_permission), Toast.LENGTH_SHORT).show();
+        }
+        Log.d("TAG", "GET PERMISSION " + requestCode);
     }
 }
