@@ -1,13 +1,13 @@
-<p align="center"><img alt="logo" src="https://github.com/zeleven/mua/blob/master/app/src/main/ic_launcher_round-web.png" width="256" height="256"></p>
+<p align="center"><img alt="logo" src="https://raw.githubusercontent.com/jixiaoyong/mua/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" width="256" height="256"></p>
 
-# Mua
+# [Muggle](<https://en.wikipedia.org/wiki/Muggle>) = Mua + `Github`
 An open source markdown editor for Android.
 
 # TODO
 
 * `fix` Support Android 9
 
-* `add` save file in github repositories.
+* `add` Save file in github repositories.
 
 ## Features
 * Multi-language support
@@ -24,29 +24,31 @@ An open source markdown editor for Android.
 * [EventBus](https://github.com/greenrobot/EventBus)
 * [BottomSheet](https://github.com/Flipboard/bottomsheet)
 * [Android Support library - preference v7 bugfix](https://github.com/Gericop/Android-Support-Preference-V7-Fix)
+* [EasyPermissions](https://github.com/googlesamples/easypermissions)
 
 ### JavaScript
 * [marked](https://github.com/chjj/marked)
 
 ## Screenshots
 <p float="left">
-  <img src="https://github.com/zeleven/mua/blob/master/screenshots/Screenshot_2018-02-04-20-59-05.png" width="240">
-  <img src="https://github.com/zeleven/mua/blob/master/screenshots/Screenshot_2018-02-04-20-59-15.png" width="240">
-  <img src="https://github.com/zeleven/mua/blob/master/screenshots/Screenshot_2018-02-04-20-59-25.png" width="240">
+  <img src="https://github.com/jixiaoyong/mua/blob/master/screenshots/Screenshot_2018-02-04-20-59-05.png" width="240">
+  <img src="https://github.com/jixiaoyong/mua/blob/master/screenshots/Screenshot_2018-02-04-20-59-15.png" width="240">
+  <img src="https://github.com/jixiaoyong/mua/blob/master/screenshots/Screenshot_2018-02-04-20-59-25.png" width="240">
 </p>
 <p float="left">
-  <img src="https://github.com/zeleven/mua/blob/master/screenshots/Screenshot_2018-02-04-21-00-14.png" width="240">
-  <img src="https://github.com/zeleven/mua/blob/master/screenshots/Screenshot_2018-02-04-21-00-17.png" width="240">
-  <img src="https://github.com/zeleven/mua/blob/master/screenshots/Screenshot_2018-02-04-21-00-21.png" width="240">
+  <img src="https://github.com/jixiaoyong/mua/blob/master/screenshots/Screenshot_2018-02-04-21-00-14.png" width="240">
+  <img src="https://github.com/jixiaoyong/mua/blob/master/screenshots/Screenshot_2018-02-04-21-00-17.png" width="240">
+  <img src="https://github.com/jixiaoyong/mua/blob/master/screenshots/Screenshot_2018-02-04-21-00-21.png" width="240">
 </p>
 <p float="left">
-  <img src="https://github.com/zeleven/mua/blob/master/screenshots/Screenshot_2018-02-04-21-00-32.png" width="240">
-  <img src="https://github.com/zeleven/mua/blob/master/screenshots/Screenshot_2018-02-04-21-07-44.png" width="240">
-  <img src="https://github.com/zeleven/mua/blob/master/screenshots/Screenshot_2018-02-04-21-08-42.png" width="240">
+  <img src="https://github.com/jixiaoyong/mua/blob/master/screenshots/Screenshot_2018-02-04-21-00-32.png" width="240">
+  <img src="https://github.com/jixiaoyong/mua/blob/master/screenshots/Screenshot_2018-02-04-21-07-44.png" width="240">
+  <img src="https://github.com/jixiaoyong/mua/blob/master/screenshots/Screenshot_2018-02-04-21-08-42.png" width="240">
 </p>
 <p float="left">
-  <img src="https://github.com/zeleven/mua/blob/master/screenshots/Screenshot_2018-02-04-21-09-14.png" width="240">
+  <img src="https://github.com/jixiaoyong/mua/blob/master/screenshots/Screenshot_2018-02-04-21-09-14.png" width="240">
 </p>
 
+
 ## License
-Under MIT license, check the [license file](https://github.com/zeleven/mua/blob/master/LICENSE) for more detail.
+Under MIT license, check the [license file](https://github.com/jixiaoyong/mua/blob/master/LICENSE) for more detail.
