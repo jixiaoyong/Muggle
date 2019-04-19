@@ -1,6 +1,6 @@
 <p align="center"><img alt="logo" src="https://raw.githubusercontent.com/jixiaoyong/mua/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" width="256" height="256"></p>
 
-# [Muggle](<https://en.wikipedia.org/wiki/Muggle>) = Mua + `Github`
+# [Muggle](<https://en.wikipedia.org/wiki/Muggle>) [![Build Status](https://www.travis-ci.org/jixiaoyong/Muggle.svg?branch=master)](https://www.travis-ci.org/jixiaoyong/Muggle)= Mua + `Github`
 An open source markdown editor for Android.
 
 # TODO
