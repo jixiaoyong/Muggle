@@ -15,6 +15,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.zeleven.mua.activity.MainActivity;
+import io.github.zeleven.mua.fragment.EditorFragment;
+import io.github.zeleven.mua.utils.FileUtils;
+
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> {
     private List<FileEntity> dataSet;
     private AppCompatActivity context;

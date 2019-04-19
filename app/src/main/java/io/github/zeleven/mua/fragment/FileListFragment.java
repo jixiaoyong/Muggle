@@ -1,4 +1,4 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.fragment;
 
 import android.app.SearchManager;
 import android.content.Context;
@@ -34,6 +34,12 @@ import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
+import io.github.zeleven.mua.FileEntity;
+import io.github.zeleven.mua.FilesAdapter;
+import io.github.zeleven.mua.R;
+import io.github.zeleven.mua.task.QueryTask;
+import io.github.zeleven.mua.utils.FileUtils;
+import io.github.zeleven.mua.utils.StorageHelper;
 
 public class FileListFragment extends BaseFragment {
     @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;

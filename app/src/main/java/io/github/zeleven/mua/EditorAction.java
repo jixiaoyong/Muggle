@@ -14,6 +14,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.File;
 
+import io.github.zeleven.mua.fragment.HelpFragment;
+import io.github.zeleven.mua.utils.FileUtils;
+import io.github.zeleven.mua.utils.UndoRedoHelper;
+
 /**
  * An action class of editor.
  */

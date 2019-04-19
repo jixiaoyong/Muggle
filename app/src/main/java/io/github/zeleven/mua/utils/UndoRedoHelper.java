@@ -1,4 +1,4 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.utils;
 
 import android.content.SharedPreferences;
 import android.text.Editable;

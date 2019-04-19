@@ -1,4 +1,4 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.activity;
 
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -13,6 +13,8 @@ import java.util.Locale;
 
 import butterknife.BindString;
 import butterknife.ButterKnife;
+import io.github.zeleven.mua.R;
+import io.github.zeleven.mua.fragment.FileListFragment;
 
 public class MainActivity extends AppCompatActivity {
     @BindString(R.string.app_name) String appName;

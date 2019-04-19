@@ -35,10 +35,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/app_describe"
+                    android:textAlignment="center"
+                    android:autoLink="web"
                     android:textSize="18sp"
                     android:layout_below="@+id/app_name"
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="20dp"/>
+
+                <TextView
+                    android:id="@+id/app_describe_addon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_describe_addon"
+                    android:textAlignment="center"
+                    android:textStyle="italic"
+                    android:autoLink="web"
+                    android:textSize="15sp"
+                    android:layout_below="@+id/app_describe"
+                    android:layout_centerHorizontal="true" />
 
             </RelativeLayout>
 

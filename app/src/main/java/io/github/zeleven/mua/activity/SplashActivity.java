@@ -1,4 +1,4 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.github.zeleven.mua.R;
 
 public class SplashActivity extends AppCompatActivity {
     @BindView(R.id.splash_layout) RelativeLayout splashLayout;

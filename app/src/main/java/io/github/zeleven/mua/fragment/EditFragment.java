@@ -1,4 +1,4 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.fragment;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -27,6 +27,12 @@ import java.util.List;
 
 import butterknife.BindString;
 import butterknife.BindView;
+import io.github.zeleven.mua.ContentChangedEvent;
+import io.github.zeleven.mua.EditorAction;
+import io.github.zeleven.mua.R;
+import io.github.zeleven.mua.task.SaveFileTask;
+import io.github.zeleven.mua.utils.FileUtils;
+import io.github.zeleven.mua.utils.StorageHelper;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 

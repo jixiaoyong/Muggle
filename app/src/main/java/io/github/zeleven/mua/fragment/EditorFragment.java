@@ -1,4 +1,4 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.fragment;
 
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -12,10 +12,17 @@ import androidx.viewpager.widget.ViewPager;
 import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
+import io.github.zeleven.mua.Constants;
+import io.github.zeleven.mua.EditorAction;
+import io.github.zeleven.mua.R;
+import io.github.zeleven.mua.utils.FileUtils;
+import io.github.zeleven.mua.view.CustomViewPager;
 
 public class EditorFragment extends BaseEditorFragment {
-    @BindView(R.id.toolbar) Toolbar toolbar;
-    @BindView(R.id.editor_viewpager) ViewPager editorViewPager;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.editor_viewpager)
+    ViewPager editorViewPager;
 
     @Override
     public int getLayoutId() {
@@ -53,12 +60,14 @@ public class EditorFragment extends BaseEditorFragment {
         final ScreenSlidePagerAdapter adapter = new ScreenSlidePagerAdapter(
                 getChildFragmentManager());
         editorViewPager.setAdapter(adapter);
+        ((CustomViewPager) editorViewPager).setSwipeable(true);
     }
 
     public void setViewPagerListener() {
         editorViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
 
             @Override
             public void onPageSelected(int position) {
@@ -68,7 +77,8 @@ public class EditorFragment extends BaseEditorFragment {
             }
 
             @Override
-            public void onPageScrollStateChanged(int state) {}
+            public void onPageScrollStateChanged(int state) {
+            }
         });
     }
 

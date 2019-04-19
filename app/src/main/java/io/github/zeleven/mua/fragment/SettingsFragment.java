@@ -1,4 +1,4 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.fragment;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,6 +16,9 @@ import androidx.preference.PreferenceManager;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 import butterknife.BindString;
+import io.github.zeleven.mua.Constants;
+import io.github.zeleven.mua.R;
+import io.github.zeleven.mua.activity.MainActivity;
 
 public class SettingsFragment extends BaseFragment {
     @BindString(R.string.drawer_item_settings) String TITLE;

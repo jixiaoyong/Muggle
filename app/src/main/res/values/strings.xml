@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Mua</string>
+    <string name="app_name" translatable="false">Muggle</string>
 
 
     <!-- navigation drawer -->
@@ -124,15 +124,15 @@
 
     <!-- preference -->
     <!-- preference key -->
-    <string name="pref_key_language">language</string>
-    <string name="pref_key_custom_editor">custom_editor</string>
-    <string name="pref_key_sync">sync</string>
-    <string name="pref_key_network">network</string>
-    <string name="pref_key_feedback">feedback</string>
-    <string name="pref_key_bug_report">bug_report</string>
-    <string name="pref_key_rating">rating</string>
-    <string name="pref_key_check_update">check_update</string>
-    <string name="pref_key_about">about</string>
+    <string name="pref_key_language" translatable="false">language</string>
+    <string name="pref_key_custom_editor" translatable="false">custom_editor</string>
+    <string name="pref_key_sync" translatable="false">sync</string>
+    <string name="pref_key_network" translatable="false">network</string>
+    <string name="pref_key_feedback" translatable="false">feedback</string>
+    <string name="pref_key_bug_report" translatable="false">bug_report</string>
+    <string name="pref_key_rating" translatable="false">rating</string>
+    <string name="pref_key_check_update" translatable="false">check_update</string>
+    <string name="pref_key_about" translatable="false">about</string>
 
     <!--preference title and summary-->
     <string name="category_title_display">显示</string>
@@ -157,7 +157,7 @@
     <string name="pref_summary_current_version">当前版本 v1.0</string>
     <string name="pref_title_about">关于</string>
 
-    <string name="issue_page">https://github.com/zeleven/mua/issues</string>
+    <string name="issue_page" translatable="false">https://github.com/jixiaoyong/Muggle/issues</string>
 
     <!-- language list preference item text -->
     <string name="pref_array_item_auto">跟随系统</string>
@@ -172,11 +172,13 @@
 
     <!--about fragment-->
     <string name="app_describe">开源的Markdown编辑器</string>
+    <string name="app_describe_addon" translatable="false">\nBase on <b>Mua</b>( https://github.com/zeleven/mua )</string>
+
     <string name="app_version_text">当前版本</string>
-    <string name="app_version_number">1.0</string>
+    <string name="app_version_number" translatable="false">1.0</string>
     <string name="project_link">项目源码</string>
     <string name="contact_me">联系作者</string>
-    <string name="bottom_text">Under MIT license.</string>
+    <string name="bottom_text" translatable="false">Under MIT license.</string>
     <!-- about fragment bottom sheet menu -->
     <string name="menu_item_title_email">Email</string>
     <string name="menu_item_title_github">GitHub</string>
@@ -185,8 +187,8 @@
 
 
     <!--test content-->
-    <string name="test_long_title">这是一个标题，一个非常长的标题，长到看不到尽头，真的特别长，后面的根本看不到，后面还有很多内容你根本就看不到的，不信再看</string>
-    <string name="test_long_content">这是一段文章摘要，一段非常长的文章摘要，一样是长到没有尽头，到底是有多长呢，你继续往后看就知道有多长了，我不知道写什么了，就这样看看可不可以吧，要是不可以那就再长一点</string>
+    <string name="test_long_title" translatable="false">这是一个标题，一个非常长的标题，长到看不到尽头，真的特别长，后面的根本看不到，后面还有很多内容你根本就看不到的，不信再看</string>
+    <string name="test_long_content" translatable="false">这是一段文章摘要，一段非常长的文章摘要，一样是长到没有尽头，到底是有多长呢，你继续往后看就知道有多长了，我不知道写什么了，就这样看看可不可以吧，要是不可以那就再长一点</string>
 
     <string name="no_write_sdcard_permission">请给予存储权限，否则无法保存文件</string>
 </resources>

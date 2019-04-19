@@ -1,4 +1,4 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.fragment;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import butterknife.ButterKnife;
+import io.github.zeleven.mua.R;
 
 public abstract class BaseFragment extends Fragment {
     protected AppCompatActivity context; // context object

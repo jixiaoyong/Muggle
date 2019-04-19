@@ -1,4 +1,4 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.view;
 
 import android.content.Context;
 import android.util.AttributeSet;

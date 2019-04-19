@@ -1,4 +1,4 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.fragment;
 
 import android.content.SharedPreferences;
 import android.webkit.WebChromeClient;
@@ -11,6 +11,7 @@ import java.util.Locale;
 
 import butterknife.BindString;
 import butterknife.BindView;
+import io.github.zeleven.mua.R;
 
 public class HelpFragment extends BaseFragment {
     @BindString(R.string.drawer_item_help) String TITLE;

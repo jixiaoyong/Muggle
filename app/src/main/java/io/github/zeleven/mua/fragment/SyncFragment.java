@@ -1,6 +1,7 @@
-package io.github.zeleven.mua;
+package io.github.zeleven.mua.fragment;
 
 import butterknife.BindString;
+import io.github.zeleven.mua.R;
 
 public class SyncFragment extends BaseFragment {
     @BindString(R.string.drawer_item_sync) String TITLE;
