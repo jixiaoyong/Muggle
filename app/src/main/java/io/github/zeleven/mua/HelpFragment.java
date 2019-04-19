@@ -1,11 +1,11 @@
 package io.github.zeleven.mua;
 
 import android.content.SharedPreferences;
-import android.support.v7.preference.PreferenceManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.Toast;
+
+import androidx.preference.PreferenceManager;
 
 import java.util.Locale;
 
