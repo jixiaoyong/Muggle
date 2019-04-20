@@ -30,6 +30,7 @@ public class FileUtils {
 
     /**
      * Listing the files from specified file path.
+     *
      * @param filesPath file path used to list files.
      * @return list which contain files.
      */
@@ -68,8 +69,9 @@ public class FileUtils {
 
     /**
      * Search files from specified file path
+     *
      * @param filesPath filepath be searched
-     * @param query search key word
+     * @param query     search key word
      * @return search result
      */
     public static List<FileEntity> searchFiles(String filesPath, final String query) {
@@ -107,21 +109,30 @@ public class FileUtils {
 
     /**
      * Save content to specified file.
-     * @param filePath file path indicate the file which be written content.
+     *
+     * @param filePath     file path indicate the file which be written content.
      * @param content
+     * @param forceRewrite rewrite old file
      * @return if save success, return true, otherwise return false.
      */
-    public static boolean saveFile(String filePath, String content) {
+    public static boolean saveFile(String filePath, String content, boolean forceRewrite) {
         boolean success;
         File file = new File(filePath);
-        if (!file.exists()) {
+        if (!file.exists() || !file.isFile()) {
             try {
                 file.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            saveContent(file, content);
-            success = true;
+            success = saveContent(file, content);
+        } else if (file.exists() && file.isFile() && forceRewrite) {
+            file.delete();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            success = saveContent(file, content);
         } else {
             success = false;
         }
@@ -130,6 +141,7 @@ public class FileUtils {
 
     /**
      * Rename file
+     *
      * @param oldFile the file which be renamed.
      * @param newFile target file.
      */
@@ -148,23 +160,29 @@ public class FileUtils {
 
     /**
      * Writing content to file.
+     *
      * @param file
      * @param content
      */
-    public static void saveContent(File file, String content) {
+    public static boolean saveContent(File file, String content) {
+        boolean result;
         try {
             FileWriter fileWriter;
             fileWriter = new FileWriter(file.getAbsolutePath());
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
             bufferedWriter.write(content);
             bufferedWriter.close();
+            result = true;
         } catch (IOException e) {
             e.printStackTrace();
+            result = false;
         }
+        return result;
     }
 
     /**
      * Get filename which has no extension behind.
+     *
      * @param fileName
      * @return
      */
@@ -186,7 +204,8 @@ public class FileUtils {
 
     /**
      * Read content from specified path.
-     * @param pathname pathname of file
+     *
+     * @param pathname  pathname of file
      * @param lineBreak indicate whether should include line break in content.
      * @return
      */
@@ -196,7 +215,8 @@ public class FileUtils {
 
     /**
      * Read content from specified file.
-     * @param file file used to read content.
+     *
+     * @param file      file used to read content.
      * @param lineBreak indicate whether should include line break in content.
      * @return
      */
@@ -227,6 +247,7 @@ public class FileUtils {
 
     /**
      * delete file
+     *
      * @param file
      * @return
      */

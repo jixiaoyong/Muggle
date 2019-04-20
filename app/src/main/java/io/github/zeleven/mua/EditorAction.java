@@ -252,9 +252,8 @@ public class EditorAction {
 //    public void save() {
 //
 //    }
-
-    public void update(String filePath) {
-        FileUtils.saveContent(new File(filePath), editText.getText().toString());
+    public boolean update(String filePath) {
+        return FileUtils.saveContent(new File(filePath), editText.getText().toString());
     }
 
     /**

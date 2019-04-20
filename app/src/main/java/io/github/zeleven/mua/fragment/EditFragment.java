@@ -4,8 +4,8 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
-import android.util.Log;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,7 +30,6 @@ import butterknife.BindView;
 import io.github.zeleven.mua.ContentChangedEvent;
 import io.github.zeleven.mua.EditorAction;
 import io.github.zeleven.mua.R;
-import io.github.zeleven.mua.task.SaveFileTask;
 import io.github.zeleven.mua.utils.FileUtils;
 import io.github.zeleven.mua.utils.StorageHelper;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -69,7 +68,6 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
     @BindString(R.string.dialog_item_text_internet_image)
     String internetImage;
 
-    private String rootPath;
     private EditorAction editorAction;
 
     @Override
@@ -80,7 +78,6 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
     @Override
     public void initView() {
         super.initView();
-        rootPath = Environment.getExternalStorageDirectory().toString() + "/" + appName + "/";
         if (fileContent != null) {
             contentInput.setText(fileContent);
         }
@@ -90,6 +87,23 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
         }
         editorAction = new EditorAction(context, contentInput);
         contentInput.requestFocus();
+        contentInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                currentContent = s.toString();
+                isContentChanged = !fileContent.equals(currentContent);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
         setOnClickListener();
     }
 
@@ -104,8 +118,8 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
         super.onPrepareOptionsMenu(menu);
         MenuItem renameItem = menu.findItem(R.id.rename);
         MenuItem deleteItem = menu.findItem(R.id.delete);
-        renameItem.setEnabled(saved);
-        deleteItem.setEnabled(saved);
+        renameItem.setEnabled(isFileSaved);
+        deleteItem.setEnabled(isFileSaved);
     }
 
     @Override
@@ -129,14 +143,19 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                     EasyPermissions.requestPermissions(request);
                     break;
                 }
-                if (!saved) {
-                    showSaveDialog();
+                if (!isFileSaved) {
+                    showSaveFileDialog(false);
                 } else {
-                    editorAction.update(filePath);
+                    isContentChanged = !editorAction.update(filePath);
+                    if (isContentChanged) {
+                        Toast.makeText(requireContext(), getString(R.string.toast_failed_saved), Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
             case R.id.rename:
-                if (saved) {
+                if (isFileSaved) {
                     AlertDialog.Builder renameDialog = new AlertDialog.Builder(context);
                     renameDialog.setTitle(R.string.dialog_title_rename_file);
 
@@ -193,40 +212,6 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void showSaveDialog() {
-        AlertDialog.Builder saveDialog = new AlertDialog.Builder(context);
-        saveDialog.setTitle(R.string.dialog_title_save_file);
-
-        LayoutInflater inflater = context.getLayoutInflater();
-        final View view = inflater.inflate(R.layout.dialog_save_file, null);
-        final EditText fileNameET = view.findViewById(R.id.file_name);
-
-        saveDialog.setView(view);
-        saveDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        saveDialog.setPositiveButton(R.string.dialog_btn_save,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        fileName = fileNameET.getText().toString();
-                        filePath = rootPath + fileName + ".md";
-                        new SaveFileTask(context, filePath, fileName,
-                                contentInput.getText().toString(), new SaveFileTask.Response() {
-                            @Override
-                            public void taskFinish(Boolean result) {
-                                saved = result; // change saved value to true if save success
-                            }
-                        }).execute();
-                    }
-                });
-
-        saveDialog.show();
     }
 
     @Override
@@ -414,9 +399,8 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         if (requestCode == REQUEST_WRITE_ES) {
-            showSaveDialog();
+            showSaveFileDialog(false);
         }
-        Log.d("TAG", "GET PERMISSION " + requestCode);
     }
 
     @Override
@@ -424,6 +408,6 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
         if (requestCode == REQUEST_WRITE_ES) {
             Toast.makeText(requireContext(), getString(R.string.no_write_sdcard_permission), Toast.LENGTH_SHORT).show();
         }
-        Log.d("TAG", "GET PERMISSION " + requestCode);
     }
+
 }

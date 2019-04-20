@@ -15,14 +15,16 @@ public class SaveFileTask extends AsyncTask<Void, Void, Boolean> {
     private String fileName;
     private String content;
     private Response response;
+    private boolean forceRewrite;
 
     public SaveFileTask(Context context, String filePath, String fileName, String content,
-                        Response response) {
+                        boolean forceRewrite, Response response) {
         this.context = context;
         this.filePath = filePath;
         this.fileName = fileName;
         this.content = content;
         this.response = response;
+        this.forceRewrite = forceRewrite;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class SaveFileTask extends AsyncTask<Void, Void, Boolean> {
             toastMessage(R.string.toast_file_name_can_not_empty);
             result = false;
         } else {
-            result = FileUtils.saveFile(filePath, content);
+            result = FileUtils.saveFile(filePath, content, forceRewrite);
             if (result) {
                 toastMessage(R.string.toast_saved);
             } else {

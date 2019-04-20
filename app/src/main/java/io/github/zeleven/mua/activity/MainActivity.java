@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
 import java.util.Locale;
@@ -14,10 +15,12 @@ import java.util.Locale;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import io.github.zeleven.mua.R;
+import io.github.zeleven.mua.fragment.Backable;
 import io.github.zeleven.mua.fragment.FileListFragment;
 
 public class MainActivity extends AppCompatActivity {
-    @BindString(R.string.app_name) String appName;
+    @BindString(R.string.app_name)
+    String appName;
     private SharedPreferences sharedPref;
 
     @Override
@@ -41,6 +44,24 @@ public class MainActivity extends AppCompatActivity {
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        boolean iCustomBack = callOnFragmentBackPressed();
+        if (!iCustomBack) {
+            super.onBackPressed();
+        }
+
+    }
+
+    private boolean callOnFragmentBackPressed() {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if ((currentFragment instanceof Backable)) {
+            return ((Backable) currentFragment).onBackPressed();
+        }
+        return false;
     }
 
     public void settingLanguage() {

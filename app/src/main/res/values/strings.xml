@@ -76,6 +76,7 @@
     <string name="dialog_et_hint_file_name">文件名</string>
     <string name="dialog_tv_file_extension">.md</string>
     <string name="dialog_btn_save">保存</string>
+    <string name="dialog_btn_discard">丢弃</string>
 
     <!-- rename file -->
     <string name="dialog_title_rename_file">重命名</string>
@@ -116,6 +117,7 @@
 
     <!-- dialog toast -->
     <string name="toast_saved">已保存</string>
+    <string name="toast_failed_saved">保存失败，请稍后重试！</string>
     <string name="toast_does_not_select">没有选择图片</string>
     <string name="toast_file_name_can_not_empty">文件名不能为空</string>
     <string name="toast_file_name_exists">文件名已存在，请重新输入</string>

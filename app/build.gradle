@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 28
@@ -33,4 +35,10 @@ dependencies {
     implementation 'com.flipboard:bottomsheet-commons:1.5.3'
     implementation 'com.takisoft.fix:preference-v7:26.1.0.3'
     implementation 'pub.devrel:easypermissions:3.0.0'
+
+    implementation "androidx.core:core-ktx:1.0.1"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }

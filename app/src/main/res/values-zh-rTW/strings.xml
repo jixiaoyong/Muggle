@@ -163,5 +163,7 @@
     <string name="menu_item_title_zhihu">知乎</string>
     <string name="category_title_editor">編輯器</string>
     <string name="no_write_sdcard_permission">請給予存儲權限，否則無法保存文件</string>
+    <string name="dialog_btn_discard">丟棄</string>
+    <string name="toast_failed_saved">保存失敗，請稍後重試！</string>
     <!-- preference -->
 </resources>
