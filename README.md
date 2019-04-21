@@ -41,6 +41,8 @@ See more:[Project](https://github.com/jixiaoyong/Muggle/projects/1)
 * [Mua](https://github.com/zeleven/mua)
 * [WanAndroid](https://github.com/jixiaoyong/WanAndroid)
 * [OpenHub](https://github.com/ThirtyDegreesRay/OpenHub)
+* [IconFont](https://www.iconfont.cn)
+* [GitHub Api](https://developer.github.com/v3/)
 
 ## Screenshots
 <p float="left">

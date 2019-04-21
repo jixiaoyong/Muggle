@@ -2,11 +2,19 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 
+def MUGGLE_CLIENT_ID = ""
+def MUGGLE_CLIENT_SECRET = ""
 
-Properties properties = new Properties()
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
-def MUGGLE_CLIENT_ID = properties.getProperty('MUGGLE_CLIENT_ID')
-def MUGGLE_CLIENT_SECRET = properties.getProperty('MUGGLE_CLIENT_SECRET')
+MUGGLE_CLIENT_ID = System.getenv("MUGGLE_CLIENT_ID")
+MUGGLE_CLIENT_SECRET = System.getenv("MUGGLE_CLIENT_SECRET")
+
+if (MUGGLE_CLIENT_ID == null || "" == MUGGLE_CLIENT_ID) {
+    System.out.println("start load from local.properties")
+    Properties properties = new Properties()
+    properties.load(project.rootProject.file('local.properties').newDataInputStream())
+    MUGGLE_CLIENT_ID = properties.getProperty('MUGGLE_CLIENT_ID')
+    MUGGLE_CLIENT_SECRET = properties.getProperty('MUGGLE_CLIENT_SECRET')
+}
 
 android {
     compileSdkVersion 28
