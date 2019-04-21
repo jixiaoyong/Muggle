@@ -1,15 +1,17 @@
 <p align="center"><img alt="logo" src="https://raw.githubusercontent.com/jixiaoyong/mua/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.png" width="256" height="256"></p>
 
-# [Muggle](https://en.wikipedia.org/wiki/Muggle) [![Build Status](https://www.travis-ci.org/jixiaoyong/Muggle.svg?branch=master)](https://www.travis-ci.org/jixiaoyong/Muggle) = [Mua](https://github.com/zeleven/mua) + [`Github`](https://github.com)
+# [Muggle](https://en.wikipedia.org/wiki/Muggle) [![Build Status](https://www.travis-ci.org/jixiaoyong/Muggle.svg?branch=master)](https://www.travis-ci.org/jixiaoyong/Muggle) = [Mua](https://github.com/zeleven/mua) + **[`Github`](https://github.com)**
 An open source markdown editor for Android.
 
 Base on [Mua](https://github.com/zeleven/mua).
 
 # TODO
 
-* `fix` Support Android 9
+- [x] `fix` Support Android 9
 
-* `add` Save file in github repositories.
+- [ ] `add` Save file in github repositories.
+
+See more:[Project](https://github.com/jixiaoyong/Muggle/projects/1)
 
 ## Features
 * Multi-language support
@@ -27,9 +29,18 @@ Base on [Mua](https://github.com/zeleven/mua).
 * [BottomSheet](https://github.com/Flipboard/bottomsheet)
 * [Android Support library - preference v7 bugfix](https://github.com/Gericop/Android-Support-Preference-V7-Fix)
 * [EasyPermissions](https://github.com/googlesamples/easypermissions)
+* [RxAndroid](https://github.com/ReactiveX/RxAndroid)
+* [retrofit](https://github.com/square/retrofit)
+* [glide](https://github.com/bumptech/glide)
 
 ### JavaScript
 * [marked](https://github.com/chjj/marked)
+
+## Also Thanks
+
+* [Mua](https://github.com/zeleven/mua)
+* [WanAndroid](https://github.com/jixiaoyong/WanAndroid)
+* [OpenHub](https://github.com/ThirtyDegreesRay/OpenHub)
 
 ## Screenshots
 <p float="left">

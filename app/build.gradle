@@ -2,20 +2,37 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def MUGGLE_CLIENT_ID = properties.getProperty('MUGGLE_CLIENT_ID')
+def MUGGLE_CLIENT_SECRET = properties.getProperty('MUGGLE_CLIENT_SECRET')
+
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "io.github.zeleven.mua"
+        applicationId "io.github.jixiaoyong.muggle"
         minSdkVersion 26
         targetSdkVersion 28
         versionCode 1
         versionName "v1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', 'MUGGLE_CLIENT_ID', '"' + MUGGLE_CLIENT_ID + '"'
+            buildConfigField 'String', 'MUGGLE_CLIENT_SECRET', '"' + MUGGLE_CLIENT_SECRET + '"'
+        }
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField 'String', 'MUGGLE_CLIENT_ID', '"' + MUGGLE_CLIENT_ID + '"'
+            buildConfigField 'String', 'MUGGLE_CLIENT_SECRET', '"' + MUGGLE_CLIENT_SECRET + '"'
         }
     }
 }
@@ -38,6 +55,17 @@ dependencies {
 
     implementation "androidx.core:core-ktx:1.0.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    //网络相关
+    implementation 'io.reactivex.rxjava2:rxandroid:2.0.2'
+    implementation 'io.reactivex.rxjava2:rxjava:2.1.10'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+
+    implementation 'com.github.bumptech.glide:glide:4.9.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
 }
 repositories {
     mavenCentral()

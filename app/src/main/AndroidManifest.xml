@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="io.github.zeleven.mua">
+    package="io.github.jixiaoyong.muggle">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
@@ -14,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
+        android:name=".AppApplication"
         tools:ignore="GoogleAppIndexingWarning">
 
         <activity
@@ -37,6 +38,18 @@
             <!--<meta-data-->
                 <!--android:name="android.app.searchable"-->
                 <!--android:resource="@xml/searchable" />-->
+        </activity>
+        <activity android:name=".activity.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="login"
+                    android:scheme="muggle" />
+            </intent-filter>
         </activity>
     </application>
 
