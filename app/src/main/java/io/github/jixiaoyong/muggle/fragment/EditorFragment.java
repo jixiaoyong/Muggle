@@ -110,7 +110,7 @@ public class EditorFragment extends BaseEditorFragment implements BackHolder
         }
 
         if (!isFileSaved) {
-            showSaveFileDialog(false);
+            showSaveFileDialog(false, true);
             return true;
         } else if (isContentChanged) {
             showSaveContentDialog();

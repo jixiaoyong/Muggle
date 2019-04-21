@@ -42,6 +42,14 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
+        <ImageView
+            android:id="@+id/file_type"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/ic_github" />
+
         <TextView
             android:id="@+id/file_date"
             android:layout_width="wrap_content"
@@ -55,11 +63,6 @@
             android:layout_height="match_parent"
             android:layout_weight="1" />
 
-        <TextView
-            android:id="@+id/file_github"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp" />
 
         <ImageView
             android:id="@+id/file_update_github"

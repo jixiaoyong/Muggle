@@ -1,4 +1,4 @@
-package io.github.jixiaoyong.muggle;
+package io.github.jixiaoyong.muggle.adapter;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -19,6 +19,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.jixiaoyong.muggle.AppApplication;
+import io.github.jixiaoyong.muggle.Constants;
+import io.github.jixiaoyong.muggle.FileEntity;
+import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.activity.MainActivity;
 import io.github.jixiaoyong.muggle.api.bean.Committer;
 import io.github.jixiaoyong.muggle.api.bean.CreateFileBody;
@@ -61,7 +65,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
             holder.fileContent.setVisibility(View.INVISIBLE);
             holder.updateToGithub.setVisibility(View.GONE);
             holder.fileDate.setVisibility(View.GONE);
-            holder.githubIcon.setVisibility(View.GONE);
+            holder.fileType.setVisibility(View.GONE);
             return;
         }
 
@@ -130,10 +134,11 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
         });
 
         final RepoContent githubContent = MainActivity.getGithubRepoConetnt(fileName);
-        if (githubContent != null) {
-            holder.githubIcon.setText(R.string.file_cloud_local);
+
+        if (githubContent != null && fileName.equals(githubContent.getName())) {
+            holder.fileType.setBackgroundResource(R.drawable.ic_file_download);
         } else {
-            holder.githubIcon.setText(R.string.file_only_local);
+            holder.fileType.setBackgroundResource(R.drawable.ic_file_local);
         }
 
         if (userInfo != null && selectRepo != null) {
@@ -197,15 +202,15 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView fileName, fileContent, fileDate, githubIcon;
-        ImageView updateToGithub;
+        TextView fileName, fileContent, fileDate;
+        ImageView updateToGithub, fileType;
 
         public ViewHolder(View itemView) {
             super(itemView);
             fileName = itemView.findViewById(R.id.file_name);
             fileContent = itemView.findViewById(R.id.file_content);
             fileDate = itemView.findViewById(R.id.file_date);
-            githubIcon = itemView.findViewById(R.id.file_github);
+            fileType = itemView.findViewById(R.id.file_type);
             updateToGithub = itemView.findViewById(R.id.file_update_github);
         }
     }

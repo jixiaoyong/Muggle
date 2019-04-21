@@ -1,11 +1,8 @@
 package io.github.jixiaoyong.muggle.activity;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 
@@ -14,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.github.jixiaoyong.muggle.R;
+import io.github.jixiaoyong.muggle.utils.AppUtils;
 
 public class SplashActivity extends AppCompatActivity {
     @BindView(R.id.splash_layout)
@@ -37,20 +35,8 @@ public class SplashActivity extends AppCompatActivity {
             }
         }, 1500);
 
-        setLightMode(this, true);
+        AppUtils.setLightMode(this, true);
 
-    }
-
-    public void setLightMode(Activity activity, boolean isLightMode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //切换到浅色状态栏模式，黑字
-            activity.getWindow().getDecorView()
-                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        } else {
-            //切换到深色模式，白字
-            activity.getWindow().getDecorView()
-                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-        }
     }
 
 }

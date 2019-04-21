@@ -3,22 +3,29 @@ package io.github.jixiaoyong.muggle.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import io.github.jixiaoyong.muggle.AppApplication
 import io.github.jixiaoyong.muggle.Constants
 import io.github.jixiaoyong.muggle.Constants.token
+import io.github.jixiaoyong.muggle.OauthToken
 import io.github.jixiaoyong.muggle.R
+import io.github.jixiaoyong.muggle.adapter.ReposListAdapter
 import io.github.jixiaoyong.muggle.api.bean.Repo
+import io.github.jixiaoyong.muggle.databinding.ActivityLoginBinding
+import io.github.jixiaoyong.muggle.utils.AppUtils
+import io.github.jixiaoyong.muggle.utils.Logger
 import io.github.jixiaoyong.muggle.utils.SPUtils
+import io.github.jixiaoyong.muggle.viewmodel.LoginViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 /**
  * author: jixiaoyong
@@ -29,7 +36,10 @@ import kotlinx.android.synthetic.main.activity_login.*
  */
 class LoginActivity : AppCompatActivity() {
 
+    private lateinit var viewModel: LoginViewModel
     private var repos: Array<Repo> = arrayOf()
+
+    private lateinit var dataBinding: ActivityLoginBinding
 
     private val listener: (position: Int) -> Unit = object : (Int) -> Unit {
         override fun invoke(position: Int) {
@@ -44,28 +54,65 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
-        initView()
+        AppUtils.setLightMode(this, true)
+
+        dataBinding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        val adapter = ReposListAdapter(listener)
+        dataBinding.adapter = adapter
+        dataBinding.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        dataBinding.onRefreshListener = SwipeRefreshLayout.OnRefreshListener {
+            getUser()
+            getRepos()
+        }
+        dataBinding.recyclerView.addItemDecoration(DividerItemDecoration(this, DividerItemDecoration.VERTICAL))
+
+        dataBinding.refreshing = true
+
+        viewModel = ViewModelProviders.of(this).get(LoginViewModel::class.java)
+        viewModel.repos.observe(this, Observer {
+            repos = it.toTypedArray()
+            Logger.d("start update recycler " + it.size)
+            adapter.submitList(ArrayList(it))
+            dataBinding.refreshing = false
+        })
+        viewModel.token.observe(this, Observer {
+            token = it.accessToken
+            SPUtils.putString(Constants.KEY_OAUTH2_TOKEN, token)
+            if (it != null) {
+                getUser()
+                getRepos()
+            }
+        })
+        viewModel.userInfo.observe(this, Observer {
+            SPUtils.putAsJson(Constants.KEY_USER_INFO, it)
+            MainActivity.userInfo = it
+        })
+
+        initToolbar(getString(R.string.select_the_repo))
+
+        //todo delete this when SyncFragment can change repo in other way
+        if (token != null && "" != token) {
+            val t = OauthToken()
+            t.accessToken = token
+            viewModel.token.value = t
+        }
 
         handleOauth(intent)
     }
 
-    private fun initView() {
-        recycler_view.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
-        recycler_view.adapter = MAdapter(repos, listener)
-    }
-
-
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        Log.d("TAG", "JSONhandleOauth")
 
         handleOauth(intent!!)
         setIntent(null)
     }
 
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
 
-    fun handleOauth(intent: Intent) {
+    private fun handleOauth(intent: Intent) {
         val uri = intent.data
         if (uri != null) {
             val code = uri.getQueryParameter("code")
@@ -83,10 +130,7 @@ class LoginActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe({
-                    token = it.accessToken
-                    SPUtils.putString(Constants.KEY_OAUTH2_TOKEN, token)
-                    getUser()
-                    getRepos()
+                    viewModel.token.value = it
                 }, {
                     it.printStackTrace()
                 })
@@ -100,8 +144,7 @@ class LoginActivity : AppCompatActivity() {
                     it.map {
                         Log.d("TAG", "repo name ${it.name} ${it.forksUrl}")
                     }
-                    repos = it
-                    recycler_view.adapter = MAdapter(it, listener)
+                    viewModel.repos.value = it
                 }, {
                     it.printStackTrace()
                 })
@@ -113,32 +156,18 @@ class LoginActivity : AppCompatActivity() {
                 .subscribeOn(Schedulers.newThread())
                 .subscribe({
                     Log.d("TAG", "userInfo:" + it.name)
-                    SPUtils.putAsJson(Constants.KEY_USER_INFO, it)
-                    MainActivity.userInfo = it
+                    viewModel.userInfo.value = it
                 }, {
                     it.printStackTrace()
                 })
     }
-}
 
-class MAdapter(private val repos: Array<Repo>, private val listener: (position: Int) -> Unit) : RecyclerView.Adapter<MAdapter.VH>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_github_repos, parent, false)
-        return VH(view)
-    }
-
-    override fun getItemCount(): Int {
-        return repos.size
-    }
-
-    override fun onBindViewHolder(holder: VH, position: Int) {
-        holder.textView.text = repos[position].name
-        holder.itemView.setOnClickListener {
-            listener.invoke(position)
-        }
-    }
-
-    class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val textView: TextView = itemView.findViewById(R.id.textview)
+    /**
+     * Init view component
+     */
+    private fun initToolbar(toolbarTitle: String) {
+        toolbar!!.title = toolbarTitle
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 }

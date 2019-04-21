@@ -1,8 +1,12 @@
 package io.github.jixiaoyong.muggle.fragment;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,8 +17,10 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 
@@ -27,6 +33,7 @@ import butterknife.BindView;
 import io.github.jixiaoyong.muggle.AppApplication;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.R;
+import io.github.jixiaoyong.muggle.activity.LoginActivity;
 import io.github.jixiaoyong.muggle.activity.MainActivity;
 import io.github.jixiaoyong.muggle.api.bean.DeleteFileBody;
 import io.github.jixiaoyong.muggle.api.bean.DeleteFileRespone;
@@ -59,6 +66,9 @@ public class SyncFragment extends BaseFragment {
     @BindView(R.id.user_name)
     TextView userName;
 
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
+
     @BindView(R.id.select_repo)
     TextView selectRepoTv;
 
@@ -81,8 +91,16 @@ public class SyncFragment extends BaseFragment {
 
         if ("".equals(Constants.token) || userInfo == null || selectRepo == null) {
             loginGithub.setVisibility(View.VISIBLE);
+            userAvatarImage.setVisibility(View.GONE);
+            userName.setVisibility(View.GONE);
+            setHasOptionsMenu(false);
+
+            selectRepoTv.setText(getString(R.string.login_via_web_tips));
         } else {
             loginGithub.setVisibility(View.GONE);
+            setHasOptionsMenu(true);
+            userAvatarImage.setVisibility(View.VISIBLE);
+            userName.setVisibility(View.VISIBLE);
         }
 
         loginGithub.setOnClickListener(new View.OnClickListener() {
@@ -102,24 +120,52 @@ public class SyncFragment extends BaseFragment {
                     .placeholder(R.mipmap.ic_launcher_round)
                     .into(userAvatarImage);
 
-            repoContentListView.setLayoutManager(new LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false));
+            repoContentListView.setLayoutManager(new LinearLayoutManager(requireContext(),
+                    RecyclerView.VERTICAL, false));
             repoContentListView.setAdapter(new MAdapter(MainActivity.selectRepoContent));
-
+            repoContentListView.addItemDecoration(new DividerItemDecoration(context,
+                    DividerItemDecoration.VERTICAL));
             getRepoContent();
 
         }
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getRepoContent();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        AppOpener.openInCustomTabsOrBrowser(requireContext(), getOAuth2Url());
     }
 
     @Override
     public void onResume() {
         super.onResume();
         initView();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.sync_fragment_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.logout:
+
+                break;
+            case R.id.change_repo:
+                startActivity(new Intent(requireContext(), LoginActivity.class));
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void getRepoContent() {

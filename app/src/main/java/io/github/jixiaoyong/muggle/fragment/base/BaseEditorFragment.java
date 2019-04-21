@@ -1,5 +1,6 @@
 package io.github.jixiaoyong.muggle.fragment.base;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Environment;
@@ -51,6 +52,10 @@ public abstract class BaseEditorFragment extends Fragment {
     }
 
     protected void showSaveFileDialog(final boolean forceRewrite) {
+        showSaveFileDialog(forceRewrite, false);
+    }
+
+    protected void showSaveFileDialog(final boolean forceRewrite, final boolean goBack) {
         AlertDialog.Builder saveDialog = new AlertDialog.Builder(context);
         saveDialog.setTitle(R.string.dialog_title_save_file);
 
@@ -83,7 +88,20 @@ public abstract class BaseEditorFragment extends Fragment {
                                 currentContent, forceRewrite, new SaveFileTask.Response() {
                             @Override
                             public void taskFinish(Boolean result) {
-                                isFileSaved = result; // change isFileSaved value to true if save success
+                                // change isFileSaved value to true if save success
+                                isFileSaved = result;
+                                isContentChanged = !result;
+                                if (goBack) {
+                                    try {
+                                        Activity activity = requireActivity();
+                                        if (activity != null) {
+                                            activity.onBackPressed();
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
                             }
                         }).execute();
                     }

@@ -23,7 +23,7 @@ interface GithubApiService {
     fun getUser(): Observable<UserInfo>
 
     @GET("/user/repos")
-    fun getUserRepos(): Observable<Array<Repo>>
+    fun getUserRepos(): Observable<ArrayList<Repo>>
 
 
     // GET /repos/:owner/:repo/contents/:path

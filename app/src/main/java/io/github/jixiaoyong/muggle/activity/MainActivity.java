@@ -1,13 +1,10 @@
 package io.github.jixiaoyong.muggle.activity;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -26,6 +23,7 @@ import io.github.jixiaoyong.muggle.api.bean.RepoContent;
 import io.github.jixiaoyong.muggle.api.bean.UserInfo;
 import io.github.jixiaoyong.muggle.fragment.BackHolder;
 import io.github.jixiaoyong.muggle.fragment.FileListFragment;
+import io.github.jixiaoyong.muggle.utils.AppUtils;
 import io.github.jixiaoyong.muggle.utils.SPUtils;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,21 +54,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(
                 R.id.fragment_container, new FileListFragment()).commit();
 
-        setLightMode(this, true);
+        AppUtils.setLightMode(this, true);
     }
-
-    public void setLightMode(Activity activity, boolean isLightMode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //切换到浅色状态栏模式，黑字
-            activity.getWindow().getDecorView()
-                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
-        } else {
-            //切换到深色模式，白字
-            activity.getWindow().getDecorView()
-                    .setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-        }
-    }
-
 
     @Override
     public boolean onSupportNavigateUp() {

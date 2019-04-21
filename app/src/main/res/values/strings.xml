@@ -201,9 +201,8 @@
     <string name="no_browser_clients">未安装浏览器客户端</string>
     <string name="choose_repo_to_sync">请选择你要同步的仓库</string>
 
-    <string name="file_only_local">本地文件</string>
-    <string name="file_only_cloud">在线文件</string>
-    <string name="file_cloud_local">已下载</string>
+    <string name="file_only_local">本地的文件</string>
+    <string name="file_download">下载的文件</string>
 
 
     <string name="upload_success">上传成功</string>
@@ -214,5 +213,10 @@
 
     <string name="delete_local_tips">只会删除本地的文件</string>
     <string name="delete_cloud_tips">只会删除在线的文件</string>
+    <string name="select_the_repo">请选择你要使用的仓库</string>
+    <string name="logout">退出</string>
+    <string name="change_repo">切换仓库</string>
+    <string name="click_to_login_github">点击登录GitHub</string>
+    <string name="login_via_web_tips">为了避免泄露您的账号密码，请选择可信任的浏览器登录。\n请在打开的页面中授权Muggle访问您的Github仓库，以便读取、存储您的文件。</string>
 
 </resources>
