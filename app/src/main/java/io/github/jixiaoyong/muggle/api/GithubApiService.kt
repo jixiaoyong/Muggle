@@ -34,6 +34,20 @@ interface GithubApiService {
                            @Path("repo") repo: String,
                            @Path("path") path: String): Observable<Array<RepoContent>>
 
+
+    // GET GET /repos/:owner/:repo/commits
+    // Parameters:
+    // path Only commits containing this file path will be returned.
+    // since  Only commits after this date will be returned.
+    //        This is a timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ.
+
+    @GET("/repos/{owner}/{repo}/commits")
+    @FormUrlEncoded
+    fun getUserRepoCommit(@Path("owner") owner: String,
+                          @Path("repo") repo: String,
+                          @Field("path") path: String,
+                          @Field("since") since: String): Observable<Array<RepoContent>>
+
     // PUT /repos/:owner/:repo/contents/:path
     @PUT("/repos/{owner}/{repo}/contents/{path}")
     fun createNewFile(@Path("owner") owner: String,

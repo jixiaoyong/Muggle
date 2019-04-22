@@ -32,6 +32,7 @@ import io.github.jixiaoyong.muggle.api.bean.UpdateFileBody;
 import io.github.jixiaoyong.muggle.api.bean.UpdateFileRespone;
 import io.github.jixiaoyong.muggle.fragment.EditorFragment;
 import io.github.jixiaoyong.muggle.utils.FileUtils;
+import io.github.jixiaoyong.muggle.utils.GitUtils;
 import io.github.jixiaoyong.muggle.utils.Logger;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
@@ -136,7 +137,16 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
         final RepoContent githubContent = MainActivity.getGithubRepoConetnt(fileName);
 
         if (githubContent != null && fileName.equals(githubContent.getName())) {
-            holder.fileType.setBackgroundResource(R.drawable.ic_file_download);
+            //仓库和本地都有该文件
+            if (githubContent.getSha().equals(GitUtils.gitSHA1(entity.getAbsolutePath()))) {
+                //sha值一致，为已经同步的文件
+                holder.fileType.setBackgroundResource(R.drawable.ic_file_download);
+            } else {
+                checkLastUpdateTime(githubContent, entity.getLastModified());
+            }
+
+            Logger.d(githubContent.getName() + "githubContent hash " + githubContent.getSha());
+            Logger.d(githubContent.getName() + "local hash " + GitUtils.gitSHA1(entity.getAbsolutePath()));
         } else {
             holder.fileType.setBackgroundResource(R.drawable.ic_file_local);
         }
@@ -194,6 +204,15 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
         } else {
             holder.updateToGithub.setVisibility(View.GONE);
         }
+    }
+
+    /**
+     * @param githubContent
+     * @param lastModified
+     * @return true cloud is new;false local is new
+     */
+    private void checkLastUpdateTime(RepoContent githubContent, long lastModified) {
+
     }
 
     @Override
