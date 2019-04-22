@@ -28,8 +28,9 @@ data class RepoContent(@SerializedName("path")
                        @SerializedName("type")//file,dir,symlink,submodule
                        val type: String = "",
                        @SerializedName("sha")
-                       val sha: String = "",
+                       var sha: String = "",
                        @SerializedName("url")
-                       val url: String = "")
+                       val url: String = "") {
+}
 
 

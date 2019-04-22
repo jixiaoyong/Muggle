@@ -42,11 +42,10 @@ interface GithubApiService {
     //        This is a timestamp in ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ.
 
     @GET("/repos/{owner}/{repo}/commits")
-    @FormUrlEncoded
     fun getUserRepoCommit(@Path("owner") owner: String,
                           @Path("repo") repo: String,
-                          @Field("path") path: String,
-                          @Field("since") since: String): Observable<Array<RepoContent>>
+                          @Query("path") path: String,
+                          @Query("since") since: String): Observable<Array<GetCommitRespone>>
 
     // PUT /repos/:owner/:repo/contents/:path
     @PUT("/repos/{owner}/{repo}/contents/{path}")

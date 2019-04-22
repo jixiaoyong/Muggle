@@ -218,6 +218,8 @@ public class FileListFragment extends BaseFragment implements EasyPermissions.Pe
                 fileListRecyclerView.addItemDecoration(new DividerItemDecoration(context,
                         DividerItemDecoration.VERTICAL));
                 fileListRecyclerView.setAdapter(adapter);
+                adapter.checkVersion();
+
             }
         } else {
             Toast.makeText(context, R.string.toast_message_sdcard_unavailable,

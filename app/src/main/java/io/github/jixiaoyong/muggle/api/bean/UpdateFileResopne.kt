@@ -25,28 +25,6 @@ data class Commit(@SerializedName("committer")
                   val parents: List<ParentsItem>?)
 
 
-data class Content(@SerializedName("path")
-                   val path: String = "",
-                   @SerializedName("size")
-                   val size: Int = 0,
-                   @SerializedName("_links")
-                   val Links: Links,
-                   @SerializedName("html_url")
-                   val htmlUrl: String = "",
-                   @SerializedName("name")
-                   val name: String = "",
-                   @SerializedName("download_url")
-                   val downloadUrl: String = "",
-                   @SerializedName("git_url")
-                   val gitUrl: String = "",
-                   @SerializedName("type")
-                   val type: String = "",
-                   @SerializedName("sha")
-                   val sha: String = "",
-                   @SerializedName("url")
-                   val url: String = "")
-
-
 data class Author(@SerializedName("date")
                   val date: String = "",
                   @SerializedName("name")
@@ -74,7 +52,7 @@ data class Verification(@SerializedName("reason")
 data class UpdateFileRespone(@SerializedName("commit")
                              val commit: Commit,
                              @SerializedName("content")
-                             val content: Content)
+                             val content: RepoContent)
 
 
 data class Committer @JvmOverloads constructor(@SerializedName("name")

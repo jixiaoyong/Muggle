@@ -4,6 +4,13 @@ public class FileEntity {
     private String name;
     private long lastModified;
     private String absolutePath;
+    /**
+     * -1 本地比在线新
+     * 0 本地和在线一样
+     * 1 在线比本地新
+     * 2 本地文件，无在线版本
+     */
+    private int isSynced = 2;
 
     public FileEntity() {
     }
@@ -36,5 +43,13 @@ public class FileEntity {
 
     public void setAbsolutePath(String absolutePath) {
         this.absolutePath = absolutePath;
+    }
+
+    public int getIsSynced() {
+        return isSynced;
+    }
+
+    public void setIsSynced(int isSynced) {
+        this.isSynced = isSynced;
     }
 }
