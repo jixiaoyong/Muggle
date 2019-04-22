@@ -3,13 +3,12 @@ package io.github.jixiaoyong.muggle
 import android.app.Application
 import android.content.Context
 import com.google.gson.GsonBuilder
+import com.tencent.bugly.Bugly
 import io.github.jixiaoyong.muggle.api.GithubApiService
 import io.github.jixiaoyong.muggle.api.GithubOauthService
 import io.github.jixiaoyong.muggle.utils.Logger
 import io.github.jixiaoyong.muggle.utils.SPUtils
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -42,21 +41,20 @@ class AppApplication : Application() {
 
         Constants.token = SPUtils.getString(Constants.KEY_OAUTH2_TOKEN)
 
+        Bugly.init(applicationContext, BuildConfig.BUGGLE_APP_IP, BuildConfig.DEBUG)
 
         okHttpClient = OkHttpClient.Builder()
-                .addInterceptor(object : Interceptor {
-                    override fun intercept(chain: Interceptor.Chain): Response {
-                        val originalRequest = chain.request()
-                        val builder = originalRequest.newBuilder()
-                        builder.addHeader("Authorization", "token ${Constants.token}")
+                .addInterceptor { chain ->
+                    val originalRequest = chain.request()
+                    val builder = originalRequest.newBuilder()
+                    builder.addHeader("Authorization", "token ${Constants.token}")
 
-                        Logger.d(originalRequest.url().url().toString())
+                    Logger.d(originalRequest.url().url().toString())
 
-                        val requestBuilder = builder.method(originalRequest.method(), originalRequest.body())
-                        val request = requestBuilder.build()
-                        return chain.proceed(request)
-                    }
-                })
+                    val requestBuilder = builder.method(originalRequest.method(), originalRequest.body())
+                    val request = requestBuilder.build()
+                    chain.proceed(request)
+                }
                 .build()
 
         githubOauthService = Retrofit.Builder()
