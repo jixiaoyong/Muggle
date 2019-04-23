@@ -17,6 +17,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +35,7 @@ import java.util.UUID;
 
 import butterknife.BindString;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.github.jixiaoyong.muggle.AppApplication;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.R;
@@ -38,11 +44,13 @@ import io.github.jixiaoyong.muggle.activity.MainActivity;
 import io.github.jixiaoyong.muggle.api.bean.DeleteFileBody;
 import io.github.jixiaoyong.muggle.api.bean.DeleteFileRespone;
 import io.github.jixiaoyong.muggle.api.bean.RepoContent;
-import io.github.jixiaoyong.muggle.fragment.base.BaseFragment;
+import io.github.jixiaoyong.muggle.databinding.FragmentSyncBinding;
 import io.github.jixiaoyong.muggle.utils.AppOpener;
 import io.github.jixiaoyong.muggle.utils.FileUtils;
+import io.github.jixiaoyong.muggle.utils.GitUtils;
 import io.github.jixiaoyong.muggle.utils.Logger;
 import io.github.jixiaoyong.muggle.utils.SPUtils;
+import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -56,7 +64,7 @@ import okhttp3.Response;
 import static io.github.jixiaoyong.muggle.activity.MainActivity.selectRepo;
 import static io.github.jixiaoyong.muggle.activity.MainActivity.userInfo;
 
-public class SyncFragment extends BaseFragment {
+public class SyncFragment extends Fragment {
     @BindString(R.string.drawer_item_sync)
     String TITLE;
 
@@ -78,16 +86,45 @@ public class SyncFragment extends BaseFragment {
     @BindView(R.id.repo_content)
     RecyclerView repoContentListView;
 
+    protected AppCompatActivity context; // context object
+    protected View view; // fragment view object
+    protected Toolbar toolbar;
+    protected String toolbarTitle;
+
+    // If true, set back arrow in toolbar.
+    protected boolean setDisplayHomeAsUpEnabled = true;
+
+    private FragmentSyncBinding dataBinding;
+    private MainActivityModel mainActivityModel;
 
     @Override
-    public int getLayoutId() {
-        return R.layout.fragment_sync;
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_sync, container, false);
+        mainActivityModel = ViewModelProviders.of(requireActivity()).get(MainActivityModel.class);
+        dataBinding.setViewModel(mainActivityModel);
+
+        mainActivityModel.getUserInfo().setValue(userInfo);
+        view = dataBinding.getRoot();
+        ButterKnife.bind(this, view);
+        context = (AppCompatActivity) getActivity();
+        initView();
+        return view;
     }
 
-    @Override
+
     public void initView() {
         toolbarTitle = TITLE;
-        super.initView();
+        toolbar = view.findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            if (toolbarTitle != null) {
+                toolbar.setTitle(toolbarTitle);
+            }
+            context.setSupportActionBar(toolbar);
+            if (setDisplayHomeAsUpEnabled) {
+                context.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+        }
 
         if ("".equals(Constants.token) || userInfo == null || selectRepo == null) {
             loginGithub.setVisibility(View.VISIBLE);
@@ -103,7 +140,7 @@ public class SyncFragment extends BaseFragment {
             userName.setVisibility(View.VISIBLE);
         }
 
-        loginGithub.setOnClickListener(new View.OnClickListener() {
+        dataBinding.loginGithub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AppOpener.openInCustomTabsOrBrowser(requireContext(), getOAuth2Url());
@@ -235,38 +272,76 @@ public class SyncFragment extends BaseFragment {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull final VH holder, int position) {
+        public void onBindViewHolder(@NonNull final VH holder, final int position) {
             final RepoContent repoContent = contents.get(position);
-            holder.textView.setText(repoContent.getName());
+            String fileName = repoContent.getName();
+            holder.textView.setText(fileName);
+            if (GitUtils.gitSHA1(Constants.LOCAL_FILE_PATH + fileName).equals(repoContent.getSha())) {
+                //the file already been downloaded
+                holder.download.setVisibility(View.GONE);
+                Logger.d(fileName + "  local sha:" + GitUtils.gitSHA1(Constants.LOCAL_FILE_PATH + fileName)
+                        + " git sha:" + repoContent.getSha());
+            } else {
+                holder.download.setVisibility(View.VISIBLE);
+            }
+
             holder.download.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(final View v) {
-                    Request request = new Request.Builder().get().url(repoContent.getDownloadUrl()).build();
-                    Call call = AppApplication.okHttpClient.newCall(request);
-                    call.enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            Logger.e("error", e);
-                        }
 
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            try {
-                                requireActivity().runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(requireContext(), requireContext().getString(R.string.download_success),
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            Logger.d("ok");
-                            FileUtils.saveFile(Constants.LOCAL_FILE_PATH + repoContent.getName(),
-                                    response.body().byteStream(), true);
-                        }
-                    });
+                    AlertDialog.Builder deleteDialog = new AlertDialog.Builder(context);
+                    deleteDialog.setTitle(context.getString(R.string.dialog_message_download_files_confirm));
+                    deleteDialog.setMessage(context.getString(R.string.download_and_overwritte_tips));
+                    deleteDialog.setNegativeButton(R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                    deleteDialog.setPositiveButton(R.string.menu_item_delete,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Request request = new Request.Builder().get().url(repoContent.getDownloadUrl()).build();
+                                    Call call = AppApplication.okHttpClient.newCall(request);
+                                    call.enqueue(new Callback() {
+                                        @Override
+                                        public void onFailure(Call call, IOException e) {
+                                            Logger.e("error", e);
+                                        }
+
+                                        @Override
+                                        public void onResponse(Call call, Response response) throws IOException {
+                                            try {
+                                                requireActivity().runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        Toast.makeText(requireContext(), requireContext().getString(R.string.download_success),
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                            FileUtils.saveFile(Constants.LOCAL_FILE_PATH + repoContent.getName(),
+                                                    response.body().byteStream(), true);
+                                            try {
+                                                requireActivity().runOnUiThread(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        notifyItemChanged(position);
+                                                    }
+                                                });
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                    });
+                                }
+                            });
+                    deleteDialog.show();
+
                 }
             });
 
@@ -308,7 +383,6 @@ public class SyncFragment extends BaseFragment {
                                 }
                             });
                     deleteDialog.show();
-
 
                 }
             });

@@ -49,25 +49,19 @@
             android:layout_marginEnd="10dp" />
 
         <TextView
-            android:id="@+id/file_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="2018-01-05"
-            android:textColor="#aaa"
-            android:textSize="14sp" />
-
-        <View
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1" />
-
-        <TextView
             android:id="@+id/file_sync"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
             android:textColor="#aaa"
             android:textSize="14sp" />
+
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
 
         <ImageView
             android:id="@+id/file_update_github"
@@ -76,6 +70,15 @@
             android:layout_marginEnd="10dp"
             android:background="@drawable/ic_upload"
             android:backgroundTint="@color/color_accent_dark" />
+
+        <TextView
+            android:id="@+id/file_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2018-01-05"
+            android:textColor="#aaa"
+            android:textSize="14sp" />
+
     </LinearLayout>
 
 </RelativeLayout>

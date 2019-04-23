@@ -218,5 +218,7 @@
     <string name="change_repo">切换仓库</string>
     <string name="click_to_login_github">点击登录GitHub</string>
     <string name="login_via_web_tips">为了避免泄露您的账号密码，请选择可信任的浏览器登录。\n请在打开的页面中授权Muggle访问您的Github仓库，以便读取、存储您的文件。</string>
+    <string name="dialog_message_download_files_confirm">确认下载吗</string>
+    <string name="download_and_overwritte_tips">下载在线文件会覆盖本地已有文件内容哦</string>
 
 </resources>

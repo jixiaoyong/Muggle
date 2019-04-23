@@ -17,5 +17,4 @@ class LoginViewModel : ViewModel() {
     var repos: MutableLiveData<List<Repo>> = MutableLiveData()
     var token: MutableLiveData<OauthToken> = MutableLiveData()
     var userInfo: MutableLiveData<UserInfo> = MutableLiveData()
-
 }

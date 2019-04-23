@@ -63,7 +63,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
             context = (MainActivity) parent.getContext();
         }
         View itemView = LayoutInflater.from(context)
-                .inflate(R.layout.file_list_item, parent, false);
+                .inflate(R.layout.item_file_list, parent, false);
         return new ViewHolder(itemView);
     }
 
