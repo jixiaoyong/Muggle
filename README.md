@@ -5,6 +5,12 @@ An open source markdown editor for Android.
 
 Base on [Mua](https://github.com/zeleven/mua).
 
+# Foreword
+
+这个项目正在紧张的开发过程中，如果你也感兴趣或者有任何好的想法，请赶快联系我吧。[Issue](<https://github.com/jixiaoyong/Muggle/issues>)，[Email](mailto:jixiaoyong1995+muggle_app@gmail.com)都会是不错的选择ヽ(ﾟ∀ﾟ)ﾒ(ﾟ∀ﾟ)ﾉ
+
+This project is in the process of development. If you are interested or have any good ideas, please contact me. [Issue](<https://github.com/jixiaoyong/Muggle/issues>), [Email](mailto:jixiaoyong1995+muggle_app@gmail.com) will be a good choiceヽ(ﾟ∀ﾟ)ﾒ(ﾟ∀ﾟ)ﾉ
+
 # TODO
 
 - [x] `fix` Support Android 9
