@@ -18,7 +18,8 @@ object Logger {
 
     @JvmStatic
     fun generateTag(): String {
-        val stack = Thread.currentThread().stackTrace[4]
+        val stacks = Throwable().stackTrace
+        val stack = stacks[4]
         return "${stack.className}.${stack.methodName}(Line:${stack.lineNumber})"
     }
 
@@ -30,13 +31,6 @@ object Logger {
         }
     }
 
-//    @JvmStatic
-//    @JvmOverloads
-//    fun e(msg: Any, e: Throwable? = null) {
-//        if (isLog) {
-//            Log.i(generateTag(), msg.toString())
-//        }
-//    }
 
     @JvmStatic
     @JvmOverloads

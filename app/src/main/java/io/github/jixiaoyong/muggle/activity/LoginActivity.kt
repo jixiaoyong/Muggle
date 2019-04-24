@@ -46,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
             Log.d("TAG", "select repo name ${repos[position].name} ${repos[position].forksUrl}")
 
             SPUtils.putAsJson(Constants.KEY_SELECT_REPO_INFO, repos[position])
-            MainActivity.selectRepo = repos[position]
+//            MainActivity.selectRepo = repos[position]
 
             finish()
         }
@@ -85,7 +85,6 @@ class LoginActivity : AppCompatActivity() {
         })
         viewModel.userInfo.observe(this, Observer {
             SPUtils.putAsJson(Constants.KEY_USER_INFO, it)
-            MainActivity.userInfo = it
         })
 
         initToolbar(getString(R.string.select_the_repo))
@@ -117,10 +116,8 @@ class LoginActivity : AppCompatActivity() {
         if (uri != null) {
             val code = uri.getQueryParameter("code")
             val state = uri.getQueryParameter("state")
-            Log.d("TAG", "JSON:$code $state")
             getToken(code, state)
         }
-
     }
 
     private fun getToken(code: String, state: String) {
@@ -141,9 +138,6 @@ class LoginActivity : AppCompatActivity() {
         AppApplication.githubApiService.getUserRepos().observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe({
-                    it.map {
-                        Log.d("TAG", "repo name ${it.name} ${it.forksUrl}")
-                    }
                     viewModel.repos.value = it
                 }, {
                     it.printStackTrace()
@@ -155,7 +149,6 @@ class LoginActivity : AppCompatActivity() {
         AppApplication.githubApiService.getUser().observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe({
-                    Log.d("TAG", "userInfo:" + it.name)
                     viewModel.userInfo.value = it
                 }, {
                     it.printStackTrace()

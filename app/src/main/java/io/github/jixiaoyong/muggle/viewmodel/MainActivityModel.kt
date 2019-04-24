@@ -3,7 +3,7 @@ package io.github.jixiaoyong.muggle.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import io.github.jixiaoyong.muggle.FileEntity
-import io.github.jixiaoyong.muggle.OauthToken
+import io.github.jixiaoyong.muggle.api.bean.Repo
 import io.github.jixiaoyong.muggle.api.bean.RepoContent
 import io.github.jixiaoyong.muggle.api.bean.UserInfo
 
@@ -16,15 +16,22 @@ import io.github.jixiaoyong.muggle.api.bean.UserInfo
  */
 class MainActivityModel : ViewModel() {
 
-    val token: MutableLiveData<OauthToken> = MutableLiveData()
+    val token: MutableLiveData<String> = MutableLiveData()
     val userInfo: MutableLiveData<UserInfo> = MutableLiveData()
-    val repoContent: MutableLiveData<RepoContent> = MutableLiveData()
+    val selectRepo: MutableLiveData<Repo> = MutableLiveData()
+    val selectRepoContent: MutableLiveData<List<RepoContent>> = MutableLiveData()
+
     val localFileList = MutableLiveData<List<FileEntity>>()
     val cloudFileList = MutableLiveData<List<RepoContent>>()
 
-    val login = MutableLiveData<Boolean>()
+    val isLogin = MutableLiveData<Boolean>()
 
     init {
-
+        checkLogin()
     }
+
+    fun checkLogin() {
+        isLogin.value = "" != token.value && userInfo.value != null && selectRepo.value != null
+    }
+
 }

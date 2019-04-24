@@ -4,13 +4,30 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
+
+import io.github.jixiaoyong.muggle.Constants;
 
 /**
  * Created by jixiaoyong1995@gmail.com
  * Data: 2019/4/22.
- * Description: 用Git的算法计算文件sha值
+ * Description: 用Git工具类
  */
 public class GitUtils {
+
+    /**
+     * 获取应用授权链接
+     *
+     * @return
+     */
+    public static String getOAuth2Url() {
+        String randomState = UUID.randomUUID().toString();
+        return Constants.OAUTH2_URL +
+                "?client_id=" + Constants.MUGGLE_CLIENT_ID +
+                "&scope=" + Constants.OAUTH2_SCOPE +
+                "&state=" + randomState;
+    }
+
 
     /**
      * @param filePath 要加密的字符串

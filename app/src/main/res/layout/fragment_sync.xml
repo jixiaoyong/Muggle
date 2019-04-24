@@ -16,65 +16,90 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/toolbar" />
+        <include
+            layout="@layout/toolbar" />
 
-        <Button
-            android:id="@+id/login_github"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="250dp"
-            android:layout_marginBottom="50dp"
-            android:background="@color/color_accent_dark"
-            android:padding="10dp"
-            android:text="@string/click_to_login_github"
-            android:textColor="@color/white"
-            android:visibility='@{"".equals(viewModel.token)?View.GONE:View.VISIBLE}' />
+        <!--Didn't Login View-->
 
-
-        <ImageView
-            android:id="@+id/user_avatar"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            app:imageFromUrl="@{viewModel.userInfo.avatarUrl}" />
-
-        <TextView
-            android:id="@+id/user_name"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/login_github"
-            android:layout_gravity="center"
-            android:textAlignment="center"
-            android:textSize="26sp"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility='@{viewModel.isLogin?View.GONE:View.VISIBLE}'>
 
-        <TextView
-            android:id="@+id/select_repo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/user_name"
-            android:layout_gravity="center"
-            android:autoLink="web"
-            android:textAlignment="center" />
-        <!--android:text='@{"".equals(viewModel.token)?R.string.login_via_web_tips:viewModel.repoContent.path}'-->
+            <Button
+                android:id="@+id/login_github"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="250dp"
+                android:layout_marginBottom="50dp"
+                android:background="@color/color_accent_dark"
+                android:padding="10dp"
+                android:text="@string/click_to_login_github"
+                android:textColor="@color/white" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/swipe_refresh_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/repo_content"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/select_repo"
-                android:layout_marginTop="20dp">
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:autoLink="web"
+                android:text="@string/login_via_web_tips"
+                android:textAlignment="center" />
 
-            </androidx.recyclerview.widget.RecyclerView>
+        </LinearLayout>
 
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        <!--Login View-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility='@{viewModel.isLogin()?View.VISIBLE:View.GONE}'>
+
+            <ImageView
+                android:id="@+id/user_avatar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                app:imageFromUrl="@{viewModel.userInfo.avatarUrl}" />
+
+            <TextView
+                android:id="@+id/user_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text='@{viewModel.userInfo.name}'
+                android:textAlignment="center"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/select_repo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:autoLink="web"
+                android:text='@{viewModel.selectRepo.name + "\n( " + viewModel.selectRepo.htmlUrl + " )"}'
+                android:textAlignment="center" />
+
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_refresh_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/repo_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@id/select_repo"
+                    android:layout_marginTop="20dp">
+
+                </androidx.recyclerview.widget.RecyclerView>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </LinearLayout>
 
     </LinearLayout>
 </layout>

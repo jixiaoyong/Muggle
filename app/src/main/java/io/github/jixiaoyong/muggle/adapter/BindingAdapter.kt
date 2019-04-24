@@ -4,6 +4,7 @@ import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
+import io.github.jixiaoyong.muggle.R
 
 /**
  * author: jixiaoyong
@@ -17,6 +18,7 @@ fun bindingImageFromUrl(imageView: ImageView, imageUrl: String?) {
     if (!imageUrl.isNullOrEmpty()) {
         Glide.with(imageView.context)
                 .load(imageUrl)
+                .placeholder(R.mipmap.ic_launcher_round)
                 .into(imageView)
     }
 }

@@ -8,6 +8,7 @@ import android.util.DisplayMetrics;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ import io.github.jixiaoyong.muggle.fragment.BackHolder;
 import io.github.jixiaoyong.muggle.fragment.FileListFragment;
 import io.github.jixiaoyong.muggle.utils.AppUtils;
 import io.github.jixiaoyong.muggle.utils.SPUtils;
+import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 
 public class MainActivity extends AppCompatActivity {
     @BindString(R.string.app_name)
@@ -34,15 +36,13 @@ public class MainActivity extends AppCompatActivity {
     public static Repo selectRepo;
     public static List<RepoContent> selectRepoContent = new ArrayList<>();
     public static UserInfo userInfo;
+    private MainActivityModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-
-        selectRepo = SPUtils.getFromJson(Constants.KEY_SELECT_REPO_INFO, Repo.class);
-        userInfo = SPUtils.getFromJson(Constants.KEY_USER_INFO, UserInfo.class);
 
         // get default shared preferences
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -55,6 +55,23 @@ public class MainActivity extends AppCompatActivity {
                 R.id.fragment_container, new FileListFragment()).commit();
 
         AppUtils.setLightMode(this, true);
+
+        viewModel = ViewModelProviders.of(this).get(MainActivityModel.class);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //兼容其他尚未改动的地方 todo 记得删除 2019-04-24 22:19:55
+        selectRepo = SPUtils.getFromJson(Constants.KEY_SELECT_REPO_INFO, Repo.class);
+        userInfo = SPUtils.getFromJson(Constants.KEY_USER_INFO, UserInfo.class);
+        Constants.token = SPUtils.getString(Constants.KEY_OAUTH2_TOKEN, "");
+
+        //为启用了JetPack的类提供
+        viewModel.getSelectRepo().setValue(SPUtils.getFromJson(Constants.KEY_SELECT_REPO_INFO, Repo.class));
+        viewModel.getToken().setValue(SPUtils.getString(Constants.KEY_OAUTH2_TOKEN, ""));
+        viewModel.getUserInfo().setValue(SPUtils.getFromJson(Constants.KEY_USER_INFO, UserInfo.class));
     }
 
     @Override

@@ -9,13 +9,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -27,15 +25,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.bumptech.glide.Glide;
-
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 
-import butterknife.BindString;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.github.jixiaoyong.muggle.AppApplication;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.R;
@@ -65,125 +57,79 @@ import static io.github.jixiaoyong.muggle.activity.MainActivity.selectRepo;
 import static io.github.jixiaoyong.muggle.activity.MainActivity.userInfo;
 
 public class SyncFragment extends Fragment {
-    @BindString(R.string.drawer_item_sync)
-    String TITLE;
-
-    @BindView(R.id.login_github)
-    Button loginGithub;
-
-    @BindView(R.id.user_name)
-    TextView userName;
-
-    @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout swipeRefreshLayout;
-
-    @BindView(R.id.select_repo)
-    TextView selectRepoTv;
-
-    @BindView(R.id.user_avatar)
-    ImageView userAvatarImage;
-
-    @BindView(R.id.repo_content)
-    RecyclerView repoContentListView;
 
     protected AppCompatActivity context; // context object
-    protected View view; // fragment view object
-    protected Toolbar toolbar;
-    protected String toolbarTitle;
-
-    // If true, set back arrow in toolbar.
-    protected boolean setDisplayHomeAsUpEnabled = true;
 
     private FragmentSyncBinding dataBinding;
-    private MainActivityModel mainActivityModel;
+    private MainActivityModel viewModel;
+
+    protected Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_sync, container, false);
-        mainActivityModel = ViewModelProviders.of(requireActivity()).get(MainActivityModel.class);
-        dataBinding.setViewModel(mainActivityModel);
-
-        mainActivityModel.getUserInfo().setValue(userInfo);
-        view = dataBinding.getRoot();
-        ButterKnife.bind(this, view);
+        viewModel = ViewModelProviders.of(requireActivity()).get(MainActivityModel.class);
+        viewModel.getToken().setValue(Constants.token);
+        viewModel.getUserInfo().setValue(userInfo);
+        dataBinding.setViewModel(viewModel);
         context = (AppCompatActivity) getActivity();
+
         initView();
-        return view;
+
+        dataBinding.setLifecycleOwner(this);
+        return dataBinding.getRoot();
     }
 
-
     public void initView() {
-        toolbarTitle = TITLE;
-        toolbar = view.findViewById(R.id.toolbar);
+
+        viewModel.getSelectRepoContent().observe(this, new androidx.lifecycle.Observer<List<RepoContent>>() {
+            @Override
+            public void onChanged(List<RepoContent> repoContents) {
+                dataBinding.repoContent.setLayoutManager(new LinearLayoutManager(requireContext(),
+                        RecyclerView.VERTICAL, false));
+                dataBinding.repoContent.setAdapter(new MAdapter(repoContents));
+                dataBinding.repoContent.addItemDecoration(new DividerItemDecoration(context,
+                        DividerItemDecoration.VERTICAL));
+            }
+        });
+
+        dataBinding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getRepoContent();
+                dataBinding.swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        toolbar = dataBinding.getRoot().findViewById(R.id.toolbar);
         if (toolbar != null) {
-            if (toolbarTitle != null) {
-                toolbar.setTitle(toolbarTitle);
-            }
+            toolbar.setTitle(R.string.drawer_item_sync);
             context.setSupportActionBar(toolbar);
-            if (setDisplayHomeAsUpEnabled) {
-                context.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            context.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        viewModel.isLogin().observe(this, new androidx.lifecycle.Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                setHasOptionsMenu(aBoolean);
             }
-        }
-
-        if ("".equals(Constants.token) || userInfo == null || selectRepo == null) {
-            loginGithub.setVisibility(View.VISIBLE);
-            userAvatarImage.setVisibility(View.GONE);
-            userName.setVisibility(View.GONE);
-            setHasOptionsMenu(false);
-
-            selectRepoTv.setText(getString(R.string.login_via_web_tips));
-        } else {
-            loginGithub.setVisibility(View.GONE);
-            setHasOptionsMenu(true);
-            userAvatarImage.setVisibility(View.VISIBLE);
-            userName.setVisibility(View.VISIBLE);
-        }
+        });
 
         dataBinding.loginGithub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AppOpener.openInCustomTabsOrBrowser(requireContext(), getOAuth2Url());
+                AppOpener.openInCustomTabsOrBrowser(requireContext(), GitUtils.getOAuth2Url());
             }
         });
-
-        if (selectRepo != null && userInfo != null) {
-            userName.setText(userInfo.getName());
-            selectRepoTv.setText(selectRepo.getName() + "\n( " + selectRepo.getHtmlUrl() + " )");
-
-            Glide.with(this)
-                    .load(userInfo.getAvatarUrl())
-                    .centerCrop()
-                    .placeholder(R.mipmap.ic_launcher_round)
-                    .into(userAvatarImage);
-
-            repoContentListView.setLayoutManager(new LinearLayoutManager(requireContext(),
-                    RecyclerView.VERTICAL, false));
-            repoContentListView.setAdapter(new MAdapter(MainActivity.selectRepoContent));
-            repoContentListView.addItemDecoration(new DividerItemDecoration(context,
-                    DividerItemDecoration.VERTICAL));
-            getRepoContent();
-
-        }
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                getRepoContent();
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        initView();
+        viewModel.checkLogin();
+        getRepoContent();
+
     }
 
     @Override
@@ -206,6 +152,10 @@ public class SyncFragment extends Fragment {
     }
 
     private void getRepoContent() {
+        if (selectRepo == null) {
+            return;
+        }
+        viewModel.getSelectRepo().setValue(selectRepo);
         AppApplication.githubApiService.getUserRepoContent(selectRepo.getOwner().getLogin(),
                 selectRepo.getName(), "")
                 .observeOn(AndroidSchedulers.mainThread())
@@ -225,7 +175,7 @@ public class SyncFragment extends Fragment {
                             }
                         }
 
-                        repoContentListView.setAdapter(new MAdapter(MainActivity.selectRepoContent));
+                        viewModel.getSelectRepoContent().setValue(MainActivity.selectRepoContent);
 
                         Logger.d("got contents size" + repoContents.length);
                     }
@@ -235,8 +185,7 @@ public class SyncFragment extends Fragment {
                         Logger.e("get onError", e);
                         Constants.token = "";
                         SPUtils.putString(Constants.KEY_OAUTH2_TOKEN, Constants.token);
-                        loginGithub.setVisibility(View.VISIBLE);
-                        repoContentListView.setVisibility(View.GONE);
+                        viewModel.isLogin().postValue(false);
                     }
 
                     @Override
@@ -246,20 +195,12 @@ public class SyncFragment extends Fragment {
                 });
     }
 
-    public String getOAuth2Url() {
-        String randomState = UUID.randomUUID().toString();
-        return Constants.OAUTH2_URL +
-                "?client_id=" + Constants.MUGGLE_CLIENT_ID +
-                "&scope=" + Constants.OAUTH2_SCOPE +
-                "&state=" + randomState;
-    }
-
 
     class MAdapter extends RecyclerView.Adapter<MAdapter.VH> {
 
         private List<RepoContent> contents;
 
-        public MAdapter(List<RepoContent> _contents) {
+        MAdapter(List<RepoContent> _contents) {
             contents = _contents;
         }
 

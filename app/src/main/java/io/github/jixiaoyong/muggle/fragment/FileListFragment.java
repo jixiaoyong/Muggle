@@ -110,9 +110,12 @@ public class FileListFragment extends BaseFragment implements EasyPermissions.Pe
             setRecyclerView(); // set recyclerview
         }
         setSwipeRefreshLayout(); // set swipe refresh layout
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
         refreshGitHubRepo();
-
     }
 
     public void initVar() {
@@ -240,12 +243,7 @@ public class FileListFragment extends BaseFragment implements EasyPermissions.Pe
                             REQUEST_WRITE_ES, Manifest.permission.WRITE_EXTERNAL_STORAGE).build();
                     EasyPermissions.requestPermissions(request);
                 } else {
-//                    if (entityList != null && adapter != null) {
-//                    Toast.makeText(context, entityList.size() + "", Toast.LENGTH_SHORT).show();
-//                        entityList.clear();
-//                        entityList.addAll(FileUtils.listFiles(rootPath));
                     setRecyclerView();
-//                    }
                 }
                 swipeRefreshLayout.setRefreshing(false);
             }
@@ -254,6 +252,7 @@ public class FileListFragment extends BaseFragment implements EasyPermissions.Pe
 
     private void refreshGitHubRepo() {
         if (selectRepo == null) {
+            Logger.d("selectRepo==null,return");
             return;
         }
         AppApplication.githubApiService.getUserRepoContent(selectRepo.getOwner().getLogin(),
