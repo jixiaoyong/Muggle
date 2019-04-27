@@ -16,6 +16,7 @@ import androidx.preference.PreferenceManager;
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
 import butterknife.BindString;
+import io.github.jixiaoyong.muggle.BuildConfig;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.activity.MainActivity;
@@ -144,10 +145,11 @@ public class SettingsFragment extends BaseFragment {
             feedbackPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse("mailto:" + Constants.MY_EMAIL));
-                    String subject = getResources().getString(R.string.pref_title_feedback);
-                    intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                    String feedbackUrl = Constants.MY_FEEDBACK_WEB;
+                    feedbackUrl += "?from=app&version=" + BuildConfig.VERSION_NAME
+                            + "&buildType=" + BuildConfig.BUILD_TYPE;
+                    Uri uri = Uri.parse(feedbackUrl);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                     startActivity(intent);
                     return true;
                 }
