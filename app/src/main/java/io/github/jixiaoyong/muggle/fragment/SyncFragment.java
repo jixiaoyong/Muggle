@@ -58,7 +58,7 @@ import static io.github.jixiaoyong.muggle.activity.MainActivity.userInfo;
 
 public class SyncFragment extends Fragment {
 
-    protected AppCompatActivity context; // context object
+    protected AppCompatActivity context; // compatActivity object
 
     private FragmentSyncBinding dataBinding;
     private MainActivityModel viewModel;
@@ -240,7 +240,7 @@ public class SyncFragment extends Fragment {
                                     dialog.cancel();
                                 }
                             });
-                    deleteDialog.setPositiveButton(R.string.menu_item_delete,
+                    deleteDialog.setPositiveButton(R.string.menu_item_download,
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {

@@ -166,5 +166,6 @@
     <string name="no_write_sdcard_permission">Please give storage permission, otherwise the file cannot be saved</string>
     <string name="dialog_btn_discard">Discard</string>
     <string name="toast_failed_saved">Save failed, please try again later!</string>
+    <string name="menu_item_download">download</string>
     <!-- preference -->
 </resources>

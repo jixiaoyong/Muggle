@@ -61,6 +61,7 @@
     <string name="menu_item_save">保存</string>
     <string name="menu_item_rename">重命名</string>
     <string name="menu_item_delete">删除</string>
+    <string name="menu_item_download">下载</string>
     <string name="menu_item_clear_all">清除所有</string>
     <string name="menu_item_docs">Markdown 语法</string>
     <string name="menu_item_statistics">统计</string>
