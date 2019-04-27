@@ -13,7 +13,7 @@ import butterknife.ButterKnife;
 import io.github.jixiaoyong.muggle.R;
 
 public abstract class BaseFragment extends Fragment {
-    protected AppCompatActivity context; // context object
+    protected AppCompatActivity context; // compatActivity object
     protected View view; // fragment view object
     protected Toolbar toolbar;
     protected String toolbarTitle;
@@ -24,6 +24,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         view = inflater.inflate(getLayoutId(), container, false);
         ButterKnife.bind(this, view);
         context = (AppCompatActivity) getActivity();

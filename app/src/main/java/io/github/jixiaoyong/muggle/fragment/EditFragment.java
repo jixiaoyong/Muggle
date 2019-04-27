@@ -246,7 +246,7 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
             case R.id.image:
                 // open dialog to insert image
 //                final CharSequence[] items = {localImage, internetImage};
-//                AlertDialog.Builder optionsDialog = new AlertDialog.Builder(context);
+//                AlertDialog.Builder optionsDialog = new AlertDialog.Builder(compatActivity);
 //                optionsDialog.setItems(items, new DialogInterface.OnClickListener() {
 //                    @Override
 //                    public void onClick(DialogInterface dialog, int which) {
@@ -260,9 +260,9 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
 //                            dialog.cancel();
 //
 //                            // insert image from internet
-//                            AlertDialog.Builder inputDialog = new AlertDialog.Builder(context);
+//                            AlertDialog.Builder inputDialog = new AlertDialog.Builder(compatActivity);
 //                            inputDialog.setTitle(R.string.dialog_title_insert_image);
-//                            LayoutInflater inflater = context.getLayoutInflater();
+//                            LayoutInflater inflater = compatActivity.getLayoutInflater();
 //                            final View dialogView = inflater.inflate(R.layout.dialog_insert_image, null);
 //                            inputDialog.setView(dialogView);
 //                            inputDialog.setNegativeButton(R.string.cancel,

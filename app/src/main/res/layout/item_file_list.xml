@@ -68,6 +68,7 @@
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginEnd="10dp"
+            android:visibility="gone"
             android:background="@drawable/ic_upload"
             android:backgroundTint="@color/color_accent_dark" />
 

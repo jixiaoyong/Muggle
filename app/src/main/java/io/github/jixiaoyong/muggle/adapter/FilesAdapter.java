@@ -299,9 +299,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
         final FileEntity entity = dataSet.get(position);
 
         SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ssZ");
-//        SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:MM:SSZ");
         final String formData = sdf.format(new Date(entity.getLastModified()));
-//        Logger.d(entity.getName() + " format data is " + formData);
 
         AppApplication.githubApiService.getUserRepoCommit(selectRepo.getOwner().getLogin(),
                 selectRepo.getName(), githubContent.getPath(), formData)
@@ -334,11 +332,11 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
         return dataSet.size() + 1;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
         TextView fileName, fileContent, fileDate, fileSync;
         ImageView updateToGithub, fileType;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             fileName = itemView.findViewById(R.id.file_name);
             fileContent = itemView.findViewById(R.id.file_content);

@@ -1,5 +1,6 @@
 package io.github.jixiaoyong.muggle.adapter
 
+import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -33,4 +34,9 @@ fun setRefreshing(view: SwipeRefreshLayout, refreshing: Boolean) {
     if (refreshing != view.isRefreshing) {
         view.isRefreshing = refreshing
     }
+}
+
+@BindingAdapter("setVisible")
+fun bindingSetVisible(view: View, visible: Boolean) {
+    view.visibility = if (visible) View.VISIBLE else View.GONE
 }

@@ -22,7 +22,7 @@ import io.github.jixiaoyong.muggle.utils.UndoRedoHelper;
  * An action class of editor.
  */
 public class EditorAction {
-    private Context context; // context instance
+    private Context context; // compatActivity instance
     private EditText editText; // edittext instance
     private UndoRedoHelper undoRedoHelper;
 

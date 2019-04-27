@@ -32,7 +32,7 @@ public class SettingsFragment extends BaseFragment {
 
     @Override
     public void initView() {
-        toolbarTitle = TITLE;
+        toolbarTitle = getString(R.string.drawer_item_settings);
         super.initView();
         getFragmentManager().beginTransaction()
                 .add(R.id.pref_container, new PreferenceFragmentCustom(), "preference")

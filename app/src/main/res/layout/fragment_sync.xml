@@ -16,8 +16,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include
-            layout="@layout/toolbar" />
+        <include layout="@layout/toolbar" />
 
         <!--Didn't Login View-->
 
@@ -25,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility='@{viewModel.isLogin?View.GONE:View.VISIBLE}'>
+            app:setVisible="@{!viewModel.isLogin}">
 
             <Button
                 android:id="@+id/login_github"
@@ -55,7 +54,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:visibility='@{viewModel.isLogin()?View.VISIBLE:View.GONE}'>
+            app:setVisible="@{viewModel.isLogin}">
 
             <ImageView
                 android:id="@+id/user_avatar"

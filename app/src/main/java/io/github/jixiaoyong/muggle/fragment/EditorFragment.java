@@ -47,6 +47,7 @@ public class EditorFragment extends BaseEditorFragment implements BackHolder
 
     @Override
     public void initView() {
+
         getArgs();
         super.initView();
         toolbar.setTitle("");
