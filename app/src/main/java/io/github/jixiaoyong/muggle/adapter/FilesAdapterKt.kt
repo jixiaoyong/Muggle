@@ -134,6 +134,9 @@ class FilesAdapterKt(entityList: List<FileEntity>?) : RecyclerView.Adapter<Files
                 View.VISIBLE
             }
         }
+        if ("" == Constants.token) {
+            holder.dataBinding.fileUpdateGithub.visibility = View.GONE
+        }
 
         val githubContent = MainActivity.getGithubRepoConetnt(fileListBean.fileName)
 

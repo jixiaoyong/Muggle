@@ -165,6 +165,8 @@ public class FileListFragment extends DataBindingBaseFragment<FragmentFilelistBi
                                 selectedFragment = new SyncFragment();
                                 break;
                             case R.id.theme:
+                                Toast.makeText(requireContext(), getString(R.string.change_theme_sorry_tips),
+                                        Toast.LENGTH_SHORT).show();
                                 break;
                             case R.id.help:
                                 selectedFragment = new HelpFragment();

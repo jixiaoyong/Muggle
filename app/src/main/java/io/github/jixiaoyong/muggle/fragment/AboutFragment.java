@@ -15,6 +15,7 @@ import com.flipboard.bottomsheet.commons.MenuSheetView;
 
 import butterknife.BindString;
 import butterknife.BindView;
+import io.github.jixiaoyong.muggle.BuildConfig;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.fragment.base.BaseFragment;
@@ -81,9 +82,12 @@ public class AboutFragment extends BaseFragment {
                             case R.id.github:
                                 openUri(Constants.MY_GITHUB);
                                 break;
-//                    case R.id.zhihu:
-//                        openUri(Constants.MY_ZHIHU);
-//                        break;
+                            case R.id.web:
+                                String feedbackUrl = Constants.MY_FEEDBACK_WEB;
+                                feedbackUrl += "?from=app&version=" + BuildConfig.VERSION_NAME
+                                        + "&buildType=" + BuildConfig.BUILD_TYPE;
+                                openUri(feedbackUrl);
+                                break;
                         }
                         if (bottomSheetLayout.isSheetShowing()) {
                             bottomSheetLayout.dismissSheet();
