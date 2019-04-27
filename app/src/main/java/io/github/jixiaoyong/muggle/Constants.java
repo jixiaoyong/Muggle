@@ -9,7 +9,7 @@ import java.io.File;
 public class Constants {
     public static final String MY_EMAIL = "jixiaoyong1995@gamil.com";
     public static final String MY_GITHUB = "http://github.com/jixiaoyong";
-    public static final String PROJECT_PAGE_URL = "https://github.com/jixiaoyong/Muggle";
+    public static final String PROJECT_PAGE_URL = "https://muggleapp.tk/";
 
     public static final String BUNDLE_KEY_FROM_FILE = "FROM_FILE";
     public static final String BUNDLE_KEY_SAVED = "SAVED";

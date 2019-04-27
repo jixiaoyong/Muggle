@@ -155,7 +155,7 @@
     <!--about fragment-->
     <string name="app_describe">開源的Markdown編輯器</string>
     <string name="app_version_text">當前版本</string>
-    <string name="project_link">項目源碼</string>
+    <string name="project_link">APP 官網</string>
     <string name="contact_me">聯繫作者</string>
     <!-- about fragment bottom sheet menu -->
     <string name="menu_item_title_email">Email</string>

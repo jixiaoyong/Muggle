@@ -178,7 +178,7 @@
 
     <string name="app_version_text">当前版本</string>
     <string name="app_version_number" translatable="false">1.0</string>
-    <string name="project_link">项目源码</string>
+    <string name="project_link">APP官网</string>
     <string name="contact_me">联系作者</string>
     <string name="bottom_text" translatable="false">Under MIT license.</string>
     <!-- about fragment bottom sheet menu -->

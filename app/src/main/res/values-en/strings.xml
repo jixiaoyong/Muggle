@@ -157,7 +157,7 @@
     <!--about fragment-->
     <string name="app_describe">Completely open source Markdown editor.</string>
     <string name="app_version_text">Current version</string>
-    <string name="project_link">Source code</string>
+    <string name="project_link">APP official website</string>
     <string name="contact_me">Contact</string>
     <!-- about fragment bottom sheet menu -->
     <string name="menu_item_title_email">Email</string>
