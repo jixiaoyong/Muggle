@@ -16,7 +16,7 @@ import androidx.lifecycle.ViewModelProviders
 import io.github.jixiaoyong.muggle.R
 import io.github.jixiaoyong.muggle.task.SaveFileTask
 
-abstract class DatabindingBaseEditorFragmentKt<T : ViewDataBinding, V : ViewModel> : Fragment() {
+abstract class BaseEditorFragment<T : ViewDataBinding, V : ViewModel> : Fragment() {
 
     protected lateinit var dataBinding: T
     protected lateinit var viewModel: V

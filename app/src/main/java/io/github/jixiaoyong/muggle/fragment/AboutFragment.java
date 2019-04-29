@@ -16,10 +16,10 @@ import io.github.jixiaoyong.muggle.BuildConfig;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.databinding.FragmentAboutBinding;
-import io.github.jixiaoyong.muggle.fragment.base.DataBindingBaseFragment;
+import io.github.jixiaoyong.muggle.fragment.base.BaseFragment;
 import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 
-public class AboutFragment extends DataBindingBaseFragment<FragmentAboutBinding, MainActivityModel> {
+public class AboutFragment extends BaseFragment<FragmentAboutBinding, MainActivityModel> {
 
     @Override
     public int getLayoutId() {

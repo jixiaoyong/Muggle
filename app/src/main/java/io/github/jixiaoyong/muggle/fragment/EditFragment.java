@@ -29,7 +29,7 @@ import io.github.jixiaoyong.muggle.ContentChangedEvent;
 import io.github.jixiaoyong.muggle.EditorAction;
 import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.databinding.FragmentEditBinding;
-import io.github.jixiaoyong.muggle.fragment.base.DatabindingBaseEditorFragmentKt;
+import io.github.jixiaoyong.muggle.fragment.base.BaseEditorFragment;
 import io.github.jixiaoyong.muggle.utils.FileUtils;
 import io.github.jixiaoyong.muggle.utils.Logger;
 import io.github.jixiaoyong.muggle.utils.StorageHelper;
@@ -37,7 +37,7 @@ import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
-public class EditFragment extends DatabindingBaseEditorFragmentKt<FragmentEditBinding, MainActivityModel>
+public class EditFragment extends BaseEditorFragment<FragmentEditBinding, MainActivityModel>
         implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_WRITE_ES = 1;

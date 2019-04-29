@@ -24,14 +24,14 @@ import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.EditorAction;
 import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.databinding.FragmentEditorBinding;
-import io.github.jixiaoyong.muggle.fragment.base.DatabindingBaseEditorFragmentKt;
+import io.github.jixiaoyong.muggle.fragment.base.BaseEditorFragment;
 import io.github.jixiaoyong.muggle.task.SaveFileTask;
 import io.github.jixiaoyong.muggle.utils.FileUtils;
 import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
-public class EditorFragment extends DatabindingBaseEditorFragmentKt<FragmentEditorBinding, MainActivityModel>
+public class EditorFragment extends BaseEditorFragment<FragmentEditorBinding, MainActivityModel>
         implements BackHolder, EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_WRITE_ES = 1;

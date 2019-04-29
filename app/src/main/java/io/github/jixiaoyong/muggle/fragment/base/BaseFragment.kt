@@ -20,7 +20,7 @@ import io.github.jixiaoyong.muggle.R
  * date: 2019-04-27
  * description: todo
  */
-abstract class DataBindingBaseFragment<T : ViewDataBinding, V : ViewModel> : Fragment() {
+abstract class BaseFragment<T : ViewDataBinding, V : ViewModel> : Fragment() {
 
     protected lateinit var dataBinding: T
     protected lateinit var viewModel: V

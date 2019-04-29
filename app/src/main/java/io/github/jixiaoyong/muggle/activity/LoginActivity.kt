@@ -46,7 +46,6 @@ class LoginActivity : AppCompatActivity() {
             Log.d("TAG", "select repo name ${repos[position].name} ${repos[position].forksUrl}")
 
             SPUtils.putAsJson(Constants.KEY_SELECT_REPO_INFO, repos[position])
-//            MainActivity.selectRepo = repos[position]
 
             finish()
         }

@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import io.github.jixiaoyong.muggle.ContentChangedEvent;
 import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.databinding.FragmentPreviewBinding;
-import io.github.jixiaoyong.muggle.fragment.base.DatabindingBaseEditorFragmentKt;
+import io.github.jixiaoyong.muggle.fragment.base.BaseEditorFragment;
 import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 
 
-public class PreviewFragment extends DatabindingBaseEditorFragmentKt<FragmentPreviewBinding, MainActivityModel> {
+public class PreviewFragment extends BaseEditorFragment<FragmentPreviewBinding, MainActivityModel> {
 
     private boolean pageFinish = false;
 

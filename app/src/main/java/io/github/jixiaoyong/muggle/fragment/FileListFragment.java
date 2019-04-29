@@ -40,7 +40,7 @@ import io.github.jixiaoyong.muggle.activity.MainActivity;
 import io.github.jixiaoyong.muggle.adapter.FilesAdapterKt;
 import io.github.jixiaoyong.muggle.api.bean.RepoContent;
 import io.github.jixiaoyong.muggle.databinding.FragmentFilelistBinding;
-import io.github.jixiaoyong.muggle.fragment.base.DataBindingBaseFragment;
+import io.github.jixiaoyong.muggle.fragment.base.BaseFragment;
 import io.github.jixiaoyong.muggle.task.QueryTask;
 import io.github.jixiaoyong.muggle.utils.FileUtils;
 import io.github.jixiaoyong.muggle.utils.Logger;
@@ -56,7 +56,7 @@ import pub.devrel.easypermissions.PermissionRequest;
 
 import static io.github.jixiaoyong.muggle.activity.MainActivity.selectRepo;
 
-public class FileListFragment extends DataBindingBaseFragment<FragmentFilelistBinding, MainActivityModel>
+public class FileListFragment extends BaseFragment<FragmentFilelistBinding, MainActivityModel>
         implements EasyPermissions.PermissionCallbacks {
     private static final int REQUEST_WRITE_ES = 1;
 
