@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.BindString;
-import butterknife.ButterKnife;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.api.bean.Repo;
@@ -29,8 +27,8 @@ import io.github.jixiaoyong.muggle.utils.SPUtils;
 import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 
 public class MainActivity extends AppCompatActivity {
-    @BindString(R.string.app_name)
-    String appName;
+//    @BindString(R.string.app_name)
+//    String appName;
     private SharedPreferences sharedPref;
 
     public static Repo selectRepo;
@@ -42,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+//        ButterKnife.bind(this);
 
         // get default shared preferences
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);

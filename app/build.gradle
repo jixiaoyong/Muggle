@@ -24,7 +24,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "io.github.jixiaoyong.muggle"
-        minSdkVersion 26
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
         versionName "v1.0"
@@ -70,8 +70,8 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraintlayoutVersion"
     testImplementation "junit:junit:$junitVersion"
 
-    implementation "com.jakewharton:butterknife:$butterKnifeVersion"
-    kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
+//    implementation "com.jakewharton:butterknife:$butterKnifeVersion"
+//    kapt "com.jakewharton:butterknife-compiler:$butterKnifeVersion"
     implementation "org.greenrobot:eventbus:$eventBusVersion"
     implementation "com.flipboard:bottomsheet-core:$bottomSheetVersion"
     implementation "com.flipboard:bottomsheet-commons:$bottomSheetVersion"

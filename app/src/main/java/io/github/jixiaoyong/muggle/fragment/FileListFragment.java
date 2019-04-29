@@ -371,7 +371,7 @@ public class FileListFragment extends DataBindingBaseFragment<FragmentFilelistBi
 
     @NotNull
     @Override
-    protected Class<MainActivityModel> getVClass() {
+    protected Class<MainActivityModel> getViewModelClass() {
         return MainActivityModel.class;
     }
 

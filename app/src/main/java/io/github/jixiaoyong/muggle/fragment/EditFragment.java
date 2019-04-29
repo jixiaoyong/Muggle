@@ -12,7 +12,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -21,54 +20,27 @@ import androidx.appcompat.app.AlertDialog;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
 
-import butterknife.BindString;
-import butterknife.BindView;
 import io.github.jixiaoyong.muggle.ContentChangedEvent;
 import io.github.jixiaoyong.muggle.EditorAction;
 import io.github.jixiaoyong.muggle.R;
-import io.github.jixiaoyong.muggle.fragment.base.BaseEditorFragment;
+import io.github.jixiaoyong.muggle.databinding.FragmentEditBinding;
+import io.github.jixiaoyong.muggle.fragment.base.DatabindingBaseEditorFragmentKt;
 import io.github.jixiaoyong.muggle.utils.FileUtils;
+import io.github.jixiaoyong.muggle.utils.Logger;
 import io.github.jixiaoyong.muggle.utils.StorageHelper;
+import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
-public class EditFragment extends BaseEditorFragment implements View.OnClickListener
-        , EasyPermissions.PermissionCallbacks {
+public class EditFragment extends DatabindingBaseEditorFragmentKt<FragmentEditBinding, MainActivityModel>
+        implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_WRITE_ES = 1;
-
-    @BindView(R.id.content_input)
-    EditText contentInput;
-    @BindString(R.string.app_name)
-    String appName;
-
-    @BindView(R.id.heading)
-    ImageButton headingBtn;
-    @BindView(R.id.bold)
-    ImageButton boldBtn;
-    @BindView(R.id.italic)
-    ImageButton italicBtn;
-    @BindView(R.id.code)
-    ImageButton blockCodeBtn;
-    @BindView(R.id.quote)
-    ImageButton quoteBtn;
-    @BindView(R.id.list_number)
-    ImageButton listNumberBtn;
-    @BindView(R.id.list_bullet)
-    ImageButton listBulletBtn;
-    @BindView(R.id.link)
-    ImageButton linkBtn;
-    @BindView(R.id.image)
-    ImageButton imageBtn;
-
-    @BindString(R.string.dialog_item_text_local_image)
-    String localImage;
-    @BindString(R.string.dialog_item_text_internet_image)
-    String internetImage;
 
     private EditorAction editorAction;
 
@@ -80,16 +52,17 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
     @Override
     public void initView() {
         super.initView();
-        if (fileContent != null) {
-            contentInput.setText(fileContent);
+
+        if (getFileContent() != null) {
+            dataBinding.contentInput.setText(getFileContent());
         }
         setHasOptionsMenu(true);
         if (editorAction == null) {
             editorAction = new EditorAction();
         }
-        editorAction = new EditorAction(context, contentInput);
-        contentInput.requestFocus();
-        contentInput.addTextChangedListener(new TextWatcher() {
+        editorAction = new EditorAction(mContext, dataBinding.contentInput);
+        dataBinding.contentInput.requestFocus();
+        dataBinding.contentInput.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -97,8 +70,8 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                currentContent = s.toString();
-                isContentChanged = !fileContent.equals(currentContent);
+                setCurrentContent(s.toString());
+                setContentChanged(!getFileContent().equals(getCurrentContent()));
             }
 
             @Override
@@ -106,7 +79,7 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
 
             }
         });
-        setOnClickListener();
+        dataBinding.setListener(listener);
     }
 
     @Override
@@ -120,8 +93,8 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
         super.onPrepareOptionsMenu(menu);
         MenuItem renameItem = menu.findItem(R.id.rename);
         MenuItem deleteItem = menu.findItem(R.id.delete);
-        renameItem.setEnabled(isFileSaved);
-        deleteItem.setEnabled(isFileSaved);
+        renameItem.setEnabled(isFileSaved());
+        deleteItem.setEnabled(isFileSaved());
     }
 
     @Override
@@ -135,7 +108,7 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                 break;
             case R.id.save:
                 if (!StorageHelper.isExternalStorageWritable()) {
-                    Toast.makeText(context, R.string.toast_message_sdcard_unavailable,
+                    Toast.makeText(mContext, R.string.toast_message_sdcard_unavailable,
                             Toast.LENGTH_SHORT).show();
                     break;
                 }
@@ -145,11 +118,11 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                     EasyPermissions.requestPermissions(request);
                     break;
                 }
-                if (!isFileSaved) {
+                if (!isFileSaved()) {
                     showSaveFileDialog(false);
                 } else {
-                    isContentChanged = !editorAction.update(filePath);
-                    if (isContentChanged) {
+                    setContentChanged(!editorAction.update(getFilePath()));
+                    if (isContentChanged()) {
                         Toast.makeText(requireContext(), getString(R.string.toast_failed_saved), Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(requireContext(), getString(R.string.toast_saved), Toast.LENGTH_SHORT).show();
@@ -157,16 +130,16 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                 }
                 break;
             case R.id.rename:
-                if (isFileSaved) {
-                    AlertDialog.Builder renameDialog = new AlertDialog.Builder(context);
+                if (isFileSaved()) {
+                    AlertDialog.Builder renameDialog = new AlertDialog.Builder(mContext);
                     renameDialog.setTitle(R.string.dialog_title_rename_file);
 
-                    LayoutInflater inflater = context.getLayoutInflater();
+                    LayoutInflater inflater = mContext.getLayoutInflater();
                     View view = inflater.inflate(R.layout.dialog_save_file, null);
                     final EditText fileNameET = view.findViewById(R.id.file_name);
 
-                    fileNameET.setText(fileName);
-                    fileNameET.setSelection(fileName.length());
+                    fileNameET.setText(getFileName());
+                    fileNameET.setSelection(getFileName().length());
 
                     renameDialog.setView(view);
                     renameDialog.setNegativeButton(R.string.cancel,
@@ -180,10 +153,10 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    fileName = fileNameET.getText().toString();
-                                    FileUtils.renameFile(context, new File(filePath),
-                                            new File(rootPath + fileName + ".md"));
-                                    filePath = rootPath + fileName + ".md";
+                                    setFileName(fileNameET.getText().toString());
+                                    FileUtils.renameFile(getContext(), new File(getFilePath()),
+                                            new File(getRootPath() + getFileName() + ".md"));
+                                    setFilePath(getRootPath() + getFileName() + ".md");
                                 }
                             });
                     renameDialog.show();
@@ -191,13 +164,13 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                 break;
             case R.id.delete:
                 // delete file, close fragment if success
-                boolean result = FileUtils.deleteFile(new File(filePath));
+                boolean result = FileUtils.deleteFile(new File(getFilePath()));
                 if (result) {
-                    Toast.makeText(context, R.string.toast_message_deleted,
+                    Toast.makeText(mContext, R.string.toast_message_deleted,
                             Toast.LENGTH_SHORT).show();
-                    context.getSupportFragmentManager().popBackStack();
+                    mContext.getSupportFragmentManager().popBackStack();
                 } else {
-                    Toast.makeText(context, R.string.toast_message_delete_error,
+                    Toast.makeText(mContext, R.string.toast_message_delete_error,
                             Toast.LENGTH_SHORT).show();
                 }
                 break;
@@ -216,35 +189,36 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.heading:
-                editorAction.heading();
-                break;
-            case R.id.bold:
-                editorAction.bold();
-                break;
-            case R.id.italic:
-                editorAction.italic();
-                break;
-            case R.id.code:
-                editorAction.insertCode();
-                break;
-            case R.id.quote:
-                editorAction.quote();
-                break;
-            case R.id.list_number:
-                editorAction.orderedList();
-                break;
-            case R.id.list_bullet:
-                editorAction.unorderedList();
-                break;
-            case R.id.link:
-                editorAction.insertLink();
-                break;
-            case R.id.image:
-                // open dialog to insert image
+    View.OnClickListener listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.heading:
+                    editorAction.heading();
+                    break;
+                case R.id.bold:
+                    editorAction.bold();
+                    break;
+                case R.id.italic:
+                    editorAction.italic();
+                    break;
+                case R.id.code:
+                    editorAction.insertCode();
+                    break;
+                case R.id.quote:
+                    editorAction.quote();
+                    break;
+                case R.id.list_number:
+                    editorAction.orderedList();
+                    break;
+                case R.id.list_bullet:
+                    editorAction.unorderedList();
+                    break;
+                case R.id.link:
+                    editorAction.insertLink();
+                    break;
+                case R.id.image:
+                    // open dialog to insert image
 //                final CharSequence[] items = {localImage, internetImage};
 //                AlertDialog.Builder optionsDialog = new AlertDialog.Builder(compatActivity);
 //                optionsDialog.setItems(items, new DialogInterface.OnClickListener() {
@@ -289,57 +263,47 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
 //                    }
 //                });
 //                optionsDialog.show();
-                // insert image
-                AlertDialog.Builder inputDialog = new AlertDialog.Builder(context);
-                inputDialog.setTitle(R.string.dialog_title_insert_image);
-                LayoutInflater inflater = context.getLayoutInflater();
-                final View dialogView = inflater.inflate(R.layout.dialog_insert_image, null);
-                inputDialog.setView(dialogView);
-                inputDialog.setNegativeButton(R.string.cancel,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
+                    // insert image
+                    AlertDialog.Builder inputDialog = new AlertDialog.Builder(mContext);
+                    inputDialog.setTitle(R.string.dialog_title_insert_image);
+                    LayoutInflater inflater = mContext.getLayoutInflater();
+                    final View dialogView = inflater.inflate(R.layout.dialog_insert_image, null);
+                    inputDialog.setView(dialogView);
+                    inputDialog.setNegativeButton(R.string.cancel,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
 
-                inputDialog.setPositiveButton(R.string.dialog_btn_insert,
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                EditText imageDisplayText = dialogView.findViewById(
-                                        R.id.image_display_text);
-                                EditText imageUri = dialogView.findViewById(R.id.image_uri);
-                                editorAction.insertImage(imageDisplayText.getText().toString(),
-                                        imageUri.getText().toString());
-                            }
-                        });
-                inputDialog.show();
-                break;
+                    inputDialog.setPositiveButton(R.string.dialog_btn_insert,
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    EditText imageDisplayText = dialogView.findViewById(
+                                            R.id.image_display_text);
+                                    EditText imageUri = dialogView.findViewById(R.id.image_uri);
+                                    editorAction.insertImage(imageDisplayText.getText().toString(),
+                                            imageUri.getText().toString());
+                                }
+                            });
+                    inputDialog.show();
+                    break;
+            }
         }
-    }
 
-    public void setOnClickListener() {
-        headingBtn.setOnClickListener(this);
-        boldBtn.setOnClickListener(this);
-        italicBtn.setOnClickListener(this);
-        blockCodeBtn.setOnClickListener(this);
-        quoteBtn.setOnClickListener(this);
-        listNumberBtn.setOnClickListener(this);
-        listBulletBtn.setOnClickListener(this);
-        linkBtn.setOnClickListener(this);
-        imageBtn.setOnClickListener(this);
-    }
+    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == 1) {
-            if (resultCode == context.RESULT_OK) {
+            if (resultCode == mContext.RESULT_OK) {
                 final Uri selectedImage = data.getData();
-                AlertDialog.Builder inputDialog = new AlertDialog.Builder(context);
+                AlertDialog.Builder inputDialog = new AlertDialog.Builder(mContext);
                 inputDialog.setTitle(R.string.dialog_title_insert_image);
 
-                LayoutInflater inflater = context.getLayoutInflater();
+                LayoutInflater inflater = mContext.getLayoutInflater();
                 View view = inflater.inflate(R.layout.dialog_insert_image, null);
                 final EditText imageDisplayText = view.findViewById(R.id.image_display_text);
                 EditText imageUri = view.findViewById(R.id.image_uri);
@@ -364,7 +328,7 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
                         });
                 inputDialog.show();
             } else {
-                Toast.makeText(context, R.string.toast_does_not_select, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, R.string.toast_does_not_select, Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -387,8 +351,9 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onRefreshEvent(Boolean refresh) {
+        Logger.d("onRefreshEvent " + refresh);
         if (refresh) {
-            EventBus.getDefault().post(new ContentChangedEvent(contentInput.getText().toString()));
+            EventBus.getDefault().post(new ContentChangedEvent(dataBinding.contentInput.getText().toString()));
         }
     }
 
@@ -412,4 +377,9 @@ public class EditFragment extends BaseEditorFragment implements View.OnClickList
         }
     }
 
+    @NotNull
+    @Override
+    protected Class getViewModelClass() {
+        return MainActivityModel.class;
+    }
 }

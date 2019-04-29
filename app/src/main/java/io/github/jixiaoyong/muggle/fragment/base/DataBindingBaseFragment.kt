@@ -24,7 +24,7 @@ abstract class DataBindingBaseFragment<T : ViewDataBinding, V : ViewModel> : Fra
 
     protected lateinit var dataBinding: T
     protected lateinit var viewModel: V
-    protected abstract val VClass: Class<V>
+    protected abstract val viewModelClass: Class<V>
     protected lateinit var compatActivity: AppCompatActivity // compatActivity object
     protected lateinit var toolbar: Toolbar
 
@@ -33,7 +33,7 @@ abstract class DataBindingBaseFragment<T : ViewDataBinding, V : ViewModel> : Fra
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
-        viewModel = ViewModelProviders.of(this).get(VClass)
+        viewModel = ViewModelProviders.of(this).get(viewModelClass)
 
         compatActivity = requireActivity() as AppCompatActivity
 
@@ -43,7 +43,7 @@ abstract class DataBindingBaseFragment<T : ViewDataBinding, V : ViewModel> : Fra
         return dataBinding.root
     }
 
-    open fun initView() {
+    protected open fun initView() {
         toolbar = dataBinding.root.findViewById(R.id.toolbar)
         toolbar.title = toolbarTitle
         compatActivity.setSupportActionBar(toolbar)

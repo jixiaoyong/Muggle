@@ -10,6 +10,7 @@ public class Constants {
     public static final String MY_EMAIL = "jixiaoyong1995@gamil.com";
     public static final String MY_GITHUB = "http://github.com/jixiaoyong";
     public static final String MY_FEEDBACK_WEB = "https://muggleapp.tk/feedback.html";
+    public static final String MY_WBE_SITE = "https://jixiaoyong.github.io/";
     public static final String PROJECT_PAGE_URL = "https://muggleapp.tk/";
 
     public static final String BUNDLE_KEY_FROM_FILE = "FROM_FILE";

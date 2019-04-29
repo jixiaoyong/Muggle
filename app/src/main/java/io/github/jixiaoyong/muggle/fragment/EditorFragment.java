@@ -16,29 +16,27 @@ import androidx.fragment.app.FragmentStatePagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import org.greenrobot.eventbus.EventBus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import butterknife.BindView;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.EditorAction;
 import io.github.jixiaoyong.muggle.R;
-import io.github.jixiaoyong.muggle.fragment.base.BaseEditorFragment;
+import io.github.jixiaoyong.muggle.databinding.FragmentEditorBinding;
+import io.github.jixiaoyong.muggle.fragment.base.DatabindingBaseEditorFragmentKt;
 import io.github.jixiaoyong.muggle.task.SaveFileTask;
 import io.github.jixiaoyong.muggle.utils.FileUtils;
-import io.github.jixiaoyong.muggle.view.CustomViewPager;
+import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
 
-public class EditorFragment extends BaseEditorFragment implements BackHolder
-        , EasyPermissions.PermissionCallbacks {
+public class EditorFragment extends DatabindingBaseEditorFragmentKt<FragmentEditorBinding, MainActivityModel>
+        implements BackHolder, EasyPermissions.PermissionCallbacks {
+
     private static final int REQUEST_WRITE_ES = 1;
 
-
-    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.editor_viewpager)
-    ViewPager editorViewPager;
 
     @Override
     public int getLayoutId() {
@@ -47,27 +45,28 @@ public class EditorFragment extends BaseEditorFragment implements BackHolder
 
     @Override
     public void initView() {
-
         getArgs();
         super.initView();
+        toolbar = dataBinding.getRoot().findViewById(R.id.toolbar);
         toolbar.setTitle("");
-        context.setSupportActionBar(toolbar);
-        context.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mContext.setSupportActionBar(toolbar);
+        mContext.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setHasOptionsMenu(true);
         setViewPager();
         setViewPagerListener();
     }
 
-    public void getArgs() {
+    private void getArgs() {
         Bundle args = getArguments();
         if (args != null) {
-            fromFile = args.getBoolean(Constants.BUNDLE_KEY_FROM_FILE);
-            if (fromFile) {
-                isFileSaved = args.getBoolean(Constants.BUNDLE_KEY_SAVED);
-                fileName = args.getString(Constants.BUNDLE_KEY_FILE_NAME);
-                filePath = args.getString(Constants.BUNDLE_KEY_FILE_PATH);
-                if (filePath != null) {
-                    fileContent = FileUtils.readContentFromPath(filePath, true);
+            setFromFile(args.getBoolean(Constants.BUNDLE_KEY_FROM_FILE));
+            if (getFromFile()) {
+                setFileSaved(args.getBoolean(Constants.BUNDLE_KEY_SAVED));
+                setFileName(args.getString(Constants.BUNDLE_KEY_FILE_NAME));
+                setFilePath(args.getString(Constants.BUNDLE_KEY_FILE_PATH));
+                if (getFilePath() != null) {
+                    setFileContent(FileUtils.readContentFromPath(getFilePath(), true));
+
                 }
             }
         }
@@ -76,12 +75,12 @@ public class EditorFragment extends BaseEditorFragment implements BackHolder
     public void setViewPager() {
         final ScreenSlidePagerAdapter adapter = new ScreenSlidePagerAdapter(
                 getChildFragmentManager());
-        editorViewPager.setAdapter(adapter);
-        ((CustomViewPager) editorViewPager).setSwipeable(true);
+        dataBinding.editorViewpager.setAdapter(adapter);
+        dataBinding.editorViewpager.setSwipeable(true);
     }
 
     public void setViewPagerListener() {
-        editorViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        dataBinding.editorViewpager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
@@ -110,10 +109,10 @@ public class EditorFragment extends BaseEditorFragment implements BackHolder
             return true;
         }
 
-        if (!isFileSaved) {
+        if (!isFileSaved()) {
             showSaveFileDialog(false, true);
             return true;
-        } else if (isContentChanged) {
+        } else if (isContentChanged()) {
             showSaveContentDialog();
             return true;
         }
@@ -122,13 +121,13 @@ public class EditorFragment extends BaseEditorFragment implements BackHolder
     }
 
     private void showSaveContentDialog() {
-        AlertDialog.Builder saveDialog = new AlertDialog.Builder(context);
+        AlertDialog.Builder saveDialog = new AlertDialog.Builder(mContext);
         saveDialog.setTitle(R.string.dialog_title_save_file);
         saveDialog.setNeutralButton(R.string.dialog_btn_discard, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                isFileSaved = true;
-                isContentChanged = false;
+                setFileSaved(true);
+                setContentChanged(false);
                 requireActivity().onBackPressed();
             }
         });
@@ -142,12 +141,12 @@ public class EditorFragment extends BaseEditorFragment implements BackHolder
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        filePath = rootPath + fileName + ".md";
-                        new SaveFileTask(context, filePath, fileName,
-                                currentContent, true, new SaveFileTask.Response() {
+                        setFilePath(getRootPath() + getFileName() + ".md");
+                        new SaveFileTask(mContext, getFilePath(), getFileName(),
+                                getCurrentContent(), true, new SaveFileTask.Response() {
                             @Override
                             public void taskFinish(Boolean result) {
-                                isContentChanged = !result; // change isFileSaved value to true if save success
+                                setContentChanged(!result); // change isFileSaved value to true if save success
                                 requireActivity().onBackPressed();
                             }
                         }).execute();
@@ -155,6 +154,12 @@ public class EditorFragment extends BaseEditorFragment implements BackHolder
                 });
 
         saveDialog.show();
+    }
+
+    @NotNull
+    @Override
+    protected Class<MainActivityModel> getViewModelClass() {
+        return MainActivityModel.class;
     }
 
 
@@ -182,16 +187,16 @@ public class EditorFragment extends BaseEditorFragment implements BackHolder
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        EditorAction editorAction = new EditorAction(context);
+        EditorAction editorAction = new EditorAction(mContext);
         switch (item.getItemId()) {
             case R.id.preview:
                 // switch to preview page
                 editorAction.toggleKeyboard(0);
-                editorViewPager.setCurrentItem(1, true);
+                dataBinding.editorViewpager.setCurrentItem(1, true);
                 break;
             case R.id.edit:
                 // switch to edit page
-                editorViewPager.setCurrentItem(0, true);
+                dataBinding.editorViewpager.setCurrentItem(0, true);
                 break;
         }
         return super.onOptionsItemSelected(item);

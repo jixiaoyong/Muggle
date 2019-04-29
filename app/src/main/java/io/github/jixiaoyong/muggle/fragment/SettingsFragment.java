@@ -7,34 +7,60 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceManager;
 
 import com.takisoft.fix.support.v7.preference.PreferenceFragmentCompat;
 
-import butterknife.BindString;
 import io.github.jixiaoyong.muggle.BuildConfig;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.activity.MainActivity;
-import io.github.jixiaoyong.muggle.fragment.base.BaseFragment;
 
-public class SettingsFragment extends BaseFragment {
-    @BindString(R.string.drawer_item_settings)
-    String TITLE;
+public class SettingsFragment extends Fragment {
 
-    @Override
+    protected AppCompatActivity context; // compatActivity object
+    protected View view; // fragment view object
+    protected Toolbar toolbar;
+    protected String toolbarTitle;
+
+    // If true, set back arrow in toolbar.
+    protected boolean setDisplayHomeAsUpEnabled = true;
+
     public int getLayoutId() {
         return R.layout.fragment_settings;
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        view = inflater.inflate(getLayoutId(), container, false);
+        context = (AppCompatActivity) getActivity();
+        initView();
+        return view;
+    }
+
     public void initView() {
         toolbarTitle = getString(R.string.drawer_item_settings);
-        super.initView();
+        toolbar = view.findViewById(R.id.toolbar);
+        if (toolbar != null) {
+            if (toolbarTitle != null) {
+                toolbar.setTitle(toolbarTitle);
+            }
+            context.setSupportActionBar(toolbar);
+            if (setDisplayHomeAsUpEnabled) {
+                context.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
+        }
         getFragmentManager().beginTransaction()
                 .add(R.id.pref_container, new PreferenceFragmentCustom(), "preference")
                 .commit();

@@ -7,31 +7,19 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
-import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.flipboard.bottomsheet.commons.MenuSheetView;
 
-import butterknife.BindString;
-import butterknife.BindView;
+import org.jetbrains.annotations.NotNull;
+
 import io.github.jixiaoyong.muggle.BuildConfig;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.R;
-import io.github.jixiaoyong.muggle.fragment.base.BaseFragment;
+import io.github.jixiaoyong.muggle.databinding.FragmentAboutBinding;
+import io.github.jixiaoyong.muggle.fragment.base.DataBindingBaseFragment;
+import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 
-public class AboutFragment extends BaseFragment {
-    @BindString(R.string.pref_title_about)
-    String TITLE;
-
-    @BindView(R.id.bottom_sheet)
-    BottomSheetLayout bottomSheetLayout;
-    @BindView(R.id.app_version_number)
-    TextView appVersionNumber;
-    @BindView(R.id.project_page_btn)
-    Button projectPageBtn;
-    @BindView(R.id.contact_btn)
-    Button contactBtn;
+public class AboutFragment extends DataBindingBaseFragment<FragmentAboutBinding, MainActivityModel> {
 
     @Override
     public int getLayoutId() {
@@ -39,28 +27,28 @@ public class AboutFragment extends BaseFragment {
     }
 
     @Override
-    public void initView() {
-        toolbarTitle = TITLE;
+    protected void initView() {
+        setToolbarTitle(getString(R.string.pref_title_about));
         super.initView();
         try {
-            PackageInfo packageInfo = context.getPackageManager().getPackageInfo(
-                    context.getPackageName(), 0);
+            PackageInfo packageInfo = requireActivity().getPackageManager().getPackageInfo(
+                    requireActivity().getPackageName(), 0);
             String versionName = packageInfo.versionName;
             int versionCode = packageInfo.versionCode;
-            appVersionNumber.setText(versionName + " ( " + versionCode + " ) ");
+            dataBinding.appVersionNumber.setText(versionName + " ( " + versionCode + " ) ");
         } catch (PackageManager.NameNotFoundException e) {
             Log.e(getClass().getName(), e.getMessage());
             e.printStackTrace();
         }
 
-        projectPageBtn.setOnClickListener(new View.OnClickListener() {
+        dataBinding.projectPageBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openUri(Constants.PROJECT_PAGE_URL);
             }
         });
 
-        contactBtn.setOnClickListener(new View.OnClickListener() {
+        dataBinding.contactBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showMenuSheet(MenuSheetView.MenuType.GRID);
@@ -68,8 +56,8 @@ public class AboutFragment extends BaseFragment {
         });
     }
 
-    public void showMenuSheet(MenuSheetView.MenuType menuType) {
-        MenuSheetView menuSheetView = new MenuSheetView(context, menuType, "Contact me via...",
+    private void showMenuSheet(MenuSheetView.MenuType menuType) {
+        MenuSheetView menuSheetView = new MenuSheetView(requireContext(), menuType, "Contact me via...",
                 new MenuSheetView.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
@@ -83,25 +71,31 @@ public class AboutFragment extends BaseFragment {
                                 openUri(Constants.MY_GITHUB);
                                 break;
                             case R.id.web:
-                                String feedbackUrl = Constants.MY_FEEDBACK_WEB;
-                                feedbackUrl += "?from=app&version=" + BuildConfig.VERSION_NAME
+                                String myWbeSite = Constants.MY_WBE_SITE;
+                                myWbeSite += "?from=app&version=" + BuildConfig.VERSION_NAME
                                         + "&buildType=" + BuildConfig.BUILD_TYPE;
-                                openUri(feedbackUrl);
+                                openUri(myWbeSite);
                                 break;
                         }
-                        if (bottomSheetLayout.isSheetShowing()) {
-                            bottomSheetLayout.dismissSheet();
+                        if (dataBinding.bottomSheet.isSheetShowing()) {
+                            dataBinding.bottomSheet.dismissSheet();
                         }
                         return true;
                     }
                 });
         menuSheetView.inflateMenu(R.menu.about_bottomsheet_menu);
-        bottomSheetLayout.showWithSheetView(menuSheetView);
+        dataBinding.bottomSheet.showWithSheetView(menuSheetView);
     }
 
-    public void openUri(String uriString) {
+    private void openUri(String uriString) {
         Uri uri = Uri.parse(uriString);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
+    }
+
+    @NotNull
+    @Override
+    protected Class getViewModelClass() {
+        return MainActivityModel.class;
     }
 }

@@ -8,15 +8,17 @@ import android.webkit.WebView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
-import butterknife.BindView;
 import io.github.jixiaoyong.muggle.ContentChangedEvent;
 import io.github.jixiaoyong.muggle.R;
-import io.github.jixiaoyong.muggle.fragment.base.BaseEditorFragment;
+import io.github.jixiaoyong.muggle.databinding.FragmentPreviewBinding;
+import io.github.jixiaoyong.muggle.fragment.base.DatabindingBaseEditorFragmentKt;
+import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel;
 
-public class PreviewFragment extends BaseEditorFragment {
-    @BindView(R.id.markdown_content)
-    WebView webView;
+
+public class PreviewFragment extends DatabindingBaseEditorFragmentKt<FragmentPreviewBinding, MainActivityModel> {
+
     private boolean pageFinish = false;
 
     @Override
@@ -57,13 +59,13 @@ public class PreviewFragment extends BaseEditorFragment {
     }
 
     public void configWebView() {
-        WebSettings webSettings = webView.getSettings();
+        WebSettings webSettings = dataBinding.markdownContent.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
 
-        webView.setVerticalScrollBarEnabled(false);
-        webView.setHorizontalScrollBarEnabled(false);
-        webView.setWebChromeClient(new WebChromeClient() {
+        dataBinding.markdownContent.setVerticalScrollBarEnabled(false);
+        dataBinding.markdownContent.setHorizontalScrollBarEnabled(false);
+        dataBinding.markdownContent.setWebChromeClient(new WebChromeClient() {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 if (newProgress == 100) {
@@ -71,18 +73,25 @@ public class PreviewFragment extends BaseEditorFragment {
                 }
             }
         });
-        webView.loadUrl("file:///android_asset/markdown.html");
+        dataBinding.markdownContent.loadUrl("file:///android_asset/markdown.html");
     }
 
     public void loadMarkdown(String markdown) {
         if (pageFinish) {
             String content = markdown.replace("\n", "\\n").replace("\"", "\\\"")
                     .replace("'", "\\'");
+
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                webView.evaluateJavascript("javascript:parseMarkdown(\"" + content + "\");", null);
+                dataBinding.markdownContent.evaluateJavascript("javascript:parseMarkdown(\"" + content + "\");", null);
             } else {
-                webView.loadUrl("javascript:parseMarkdown(\"" + content + "\");");
+                dataBinding.markdownContent.loadUrl("javascript:parseMarkdown(\"" + content + "\");");
             }
         }
+    }
+
+    @NotNull
+    @Override
+    protected Class<MainActivityModel> getViewModelClass() {
+        return MainActivityModel.class;
     }
 }
