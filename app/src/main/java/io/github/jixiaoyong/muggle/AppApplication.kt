@@ -72,8 +72,6 @@ class AppApplication : Application() {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
                 .create(GithubApiService::class.java)
-
-
     }
 
 }

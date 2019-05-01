@@ -5,7 +5,7 @@
 
         <variable
             name="fileBean"
-            type="io.github.jixiaoyong.muggle.viewmodel.FileListBean" />
+            type="io.github.jixiaoyong.muggle.viewmodel.bean.FileListBean" />
     </data>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

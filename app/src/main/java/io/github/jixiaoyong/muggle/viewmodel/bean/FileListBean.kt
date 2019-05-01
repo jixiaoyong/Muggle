@@ -1,4 +1,4 @@
-package io.github.jixiaoyong.muggle.viewmodel
+package io.github.jixiaoyong.muggle.viewmodel.bean
 
 /**
  * author: jixiaoyong

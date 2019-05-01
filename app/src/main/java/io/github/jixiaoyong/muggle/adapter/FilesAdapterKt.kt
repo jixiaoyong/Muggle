@@ -26,7 +26,7 @@ import io.github.jixiaoyong.muggle.fragment.EditorFragment
 import io.github.jixiaoyong.muggle.utils.FileUtils
 import io.github.jixiaoyong.muggle.utils.GitUtils
 import io.github.jixiaoyong.muggle.utils.Logger
-import io.github.jixiaoyong.muggle.viewmodel.FileListBean
+import io.github.jixiaoyong.muggle.viewmodel.bean.FileListBean
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Call
@@ -56,6 +56,7 @@ class FilesAdapterKt(entityList: List<FileEntity>?) : RecyclerView.Adapter<Files
         if (position >= dataSet.size) {
             return
         }
+
         val entity = dataSet[position]
         val fileName = entity.name
         val fileListBean = FileListBean(entity.name)
@@ -134,14 +135,15 @@ class FilesAdapterKt(entityList: List<FileEntity>?) : RecyclerView.Adapter<Files
                 View.VISIBLE
             }
         }
+
         if ("" == Constants.token) {
             holder.dataBinding.fileUpdateGithub.visibility = View.GONE
         }
 
         val githubContent = MainActivity.getGithubRepoConetnt(fileListBean.fileName)
 
-        if (userInfo != null && selectRepo != null) {
-            holder.dataBinding.fileUpdateGithub.visibility = View.VISIBLE
+        if (userInfo != null && selectRepo != null
+                && holder.dataBinding.fileUpdateGithub.visibility == View.VISIBLE) {
             holder.dataBinding.fileUpdateGithub.setOnClickListener {
                 if (githubContent != null) {
                     if (dataSet[position].isSynced == -1) {
@@ -158,6 +160,7 @@ class FilesAdapterKt(entityList: List<FileEntity>?) : RecyclerView.Adapter<Files
                                     Toast.makeText(holder.itemView.context,
                                             holder.itemView.context.getString(R.string.upgrade_success), Toast.LENGTH_SHORT).show()
                                     Logger.d(content1)
+                                    checkVersion()
                                     notifyDataSetChanged()
                                 }, { throwable -> Logger.e("error", throwable) })
                     } else if (dataSet[position].isSynced == 1) {

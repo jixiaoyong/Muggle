@@ -38,6 +38,7 @@ import io.github.jixiaoyong.muggle.FileEntity;
 import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.activity.MainActivity;
 import io.github.jixiaoyong.muggle.adapter.FilesAdapterKt;
+import io.github.jixiaoyong.muggle.api.bean.Repo;
 import io.github.jixiaoyong.muggle.api.bean.RepoContent;
 import io.github.jixiaoyong.muggle.databinding.FragmentFilelistBinding;
 import io.github.jixiaoyong.muggle.fragment.base.BaseFragment;
@@ -53,8 +54,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
-
-import static io.github.jixiaoyong.muggle.activity.MainActivity.selectRepo;
 
 public class FileListFragment extends BaseFragment<FragmentFilelistBinding, MainActivityModel>
         implements EasyPermissions.PermissionCallbacks {
@@ -209,19 +208,19 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
                 } else {
                     refreshGitHubRepo();
                 }
-
                 dataBinding.swipeRefreshLayout.setRefreshing(false);
             }
         });
     }
 
     private void refreshGitHubRepo() {
-        if (selectRepo == null) {
+        Repo repo = viewModel.getSelectRepo().getValue();
+        if (repo == null) {
             Logger.d("selectRepo==null,return");
             return;
         }
-        AppApplication.githubApiService.getUserRepoContent(selectRepo.getOwner().getLogin(),
-                selectRepo.getName(), "")
+        AppApplication.githubApiService.getUserRepoContent(repo.getOwner().getLogin(),
+                repo.getName(), "")
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.newThread())
                 .subscribe(new Observer<RepoContent[]>() {
@@ -232,17 +231,22 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
 
                     @Override
                     public void onNext(RepoContent[] repoContents) {
-                        MainActivity.selectRepoContent.clear();
+                        List<RepoContent> onlineRepoContents = new ArrayList<>();
                         for (RepoContent r : repoContents) {
                             if ("file".equals(r.getType()) && r.getName().toLowerCase().endsWith(".md")) {
-                                MainActivity.selectRepoContent.add(r);
+                                onlineRepoContents.add(r);
                             }
                         }
 
+                        //for old
+                        MainActivity.selectRepoContent.clear();
+                        MainActivity.selectRepoContent.addAll(onlineRepoContents);
+
                         entityList = FileUtils.listFiles(rootPath);
                         viewModel.getLocalFileList().setValue(entityList);
+                        viewModel.getSelectRepoContent().setValue(onlineRepoContents);
 
-                        Logger.d("got contents size" + repoContents.length);
+                        Logger.d("got contents size" + onlineRepoContents.size());
                     }
 
                     @Override
@@ -250,6 +254,9 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
                         Logger.e("get onError", e);
                         Constants.token = "";
                         SPUtils.putString(Constants.KEY_OAUTH2_TOKEN, Constants.token);
+
+                        viewModel.getToken().setValue("");
+
                         refreshLocalFileList();
                     }
 

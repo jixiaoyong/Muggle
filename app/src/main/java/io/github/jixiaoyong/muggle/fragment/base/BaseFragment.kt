@@ -33,7 +33,7 @@ abstract class BaseFragment<T : ViewDataBinding, V : ViewModel> : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         dataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
-        viewModel = ViewModelProviders.of(this).get(viewModelClass)
+        viewModel = ViewModelProviders.of(requireActivity()).get(viewModelClass)
 
         compatActivity = requireActivity() as AppCompatActivity
 

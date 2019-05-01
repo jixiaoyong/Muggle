@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.github.jixiaoyong.muggle.AppApplication;
@@ -35,6 +36,7 @@ import io.github.jixiaoyong.muggle.activity.LoginActivity;
 import io.github.jixiaoyong.muggle.activity.MainActivity;
 import io.github.jixiaoyong.muggle.api.bean.DeleteFileBody;
 import io.github.jixiaoyong.muggle.api.bean.DeleteFileRespone;
+import io.github.jixiaoyong.muggle.api.bean.Repo;
 import io.github.jixiaoyong.muggle.api.bean.RepoContent;
 import io.github.jixiaoyong.muggle.databinding.FragmentSyncBinding;
 import io.github.jixiaoyong.muggle.utils.AppOpener;
@@ -53,9 +55,6 @@ import okhttp3.Callback;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static io.github.jixiaoyong.muggle.activity.MainActivity.selectRepo;
-import static io.github.jixiaoyong.muggle.activity.MainActivity.userInfo;
-
 public class SyncFragment extends Fragment {
 
     protected AppCompatActivity context; // compatActivity object
@@ -70,8 +69,7 @@ public class SyncFragment extends Fragment {
                              Bundle savedInstanceState) {
         dataBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_sync, container, false);
         viewModel = ViewModelProviders.of(requireActivity()).get(MainActivityModel.class);
-        viewModel.getToken().setValue(Constants.token);
-        viewModel.getUserInfo().setValue(userInfo);
+
         dataBinding.setViewModel(viewModel);
         context = (AppCompatActivity) getActivity();
 
@@ -152,6 +150,7 @@ public class SyncFragment extends Fragment {
     }
 
     private void getRepoContent() {
+        Repo selectRepo = viewModel.getSelectRepo().getValue();
         if (selectRepo == null) {
             return;
         }
@@ -168,16 +167,19 @@ public class SyncFragment extends Fragment {
 
                     @Override
                     public void onNext(RepoContent[] repoContents) {
-                        MainActivity.selectRepoContent.clear();
+                        List<RepoContent> repoContentList = new ArrayList<>();
                         for (RepoContent r : repoContents) {
                             if ("file".equals(r.getType()) && r.getName().toLowerCase().endsWith(".md")) {
-                                MainActivity.selectRepoContent.add(r);
+                                repoContentList.add(r);
                             }
                         }
 
-                        viewModel.getSelectRepoContent().setValue(MainActivity.selectRepoContent);
+                        MainActivity.selectRepoContent.clear();
+                        MainActivity.selectRepoContent.addAll(repoContentList);
 
-                        Logger.d("got contents size" + repoContents.length);
+                        viewModel.getSelectRepoContent().setValue(repoContentList);
+
+                        Logger.d("got contents size" + repoContentList.size());
                     }
 
                     @Override
@@ -185,6 +187,7 @@ public class SyncFragment extends Fragment {
                         Logger.e("get onError", e);
                         Constants.token = "";
                         SPUtils.putString(Constants.KEY_OAUTH2_TOKEN, Constants.token);
+                        viewModel.getToken().setValue("");
                         viewModel.isLogin().postValue(false);
                     }
 
@@ -303,6 +306,7 @@ public class SyncFragment extends Fragment {
                             new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    Repo selectRepo = viewModel.getSelectRepo().getValue();
                                     AppApplication.githubApiService.deleteFile(
                                             selectRepo.getOwner().getLogin(), selectRepo.getName(), repoContent.getPath(),
                                             new DeleteFileBody("Delete By Muggle", repoContent.getSha()))
