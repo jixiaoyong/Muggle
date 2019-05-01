@@ -29,7 +29,7 @@ android:
     - '.+'
     
 before_install:
-  - yes | sdkmanager "platforms;android-28"
+  - yes
      - chmod +x gradlew
 script:              # 执行:下面的命令
   - ./gradlew assembleRelease
