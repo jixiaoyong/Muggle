@@ -15,8 +15,6 @@ import io.github.jixiaoyong.muggle.Constants
 import io.github.jixiaoyong.muggle.FileEntity
 import io.github.jixiaoyong.muggle.R
 import io.github.jixiaoyong.muggle.activity.MainActivity
-import io.github.jixiaoyong.muggle.activity.MainActivity.selectRepo
-import io.github.jixiaoyong.muggle.activity.MainActivity.userInfo
 import io.github.jixiaoyong.muggle.api.bean.Committer
 import io.github.jixiaoyong.muggle.api.bean.CreateFileBody
 import io.github.jixiaoyong.muggle.api.bean.RepoContent
@@ -26,6 +24,7 @@ import io.github.jixiaoyong.muggle.fragment.EditorFragment
 import io.github.jixiaoyong.muggle.utils.FileUtils
 import io.github.jixiaoyong.muggle.utils.GitUtils
 import io.github.jixiaoyong.muggle.utils.Logger
+import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel
 import io.github.jixiaoyong.muggle.viewmodel.bean.FileListBean
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -39,7 +38,13 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class FilesAdapterKt(entityList: List<FileEntity>?) : RecyclerView.Adapter<FilesAdapterKt.ViewHolder>() {
+class FilesAdapterKt(entityList: List<FileEntity>?, viewModel: MainActivityModel)
+    : RecyclerView.Adapter<FilesAdapterKt.ViewHolder>() {
+
+    private val selectRepo = viewModel.selectRepo.value
+    private val userInfo = viewModel.userInfo.value
+    private val selectRepoContent = viewModel.selectRepoContent.value
+
     private val dataSet = entityList?.toMutableList() ?: arrayListOf()
     private var context: AppCompatActivity? = null
 
@@ -140,7 +145,7 @@ class FilesAdapterKt(entityList: List<FileEntity>?) : RecyclerView.Adapter<Files
             holder.dataBinding.fileUpdateGithub.visibility = View.GONE
         }
 
-        val githubContent = MainActivity.getGithubRepoConetnt(fileListBean.fileName)
+        val githubContent = getGithubRepoConetnt(fileListBean.fileName)
 
         if (userInfo != null && selectRepo != null
                 && holder.dataBinding.fileUpdateGithub.visibility == View.VISIBLE) {
@@ -208,7 +213,6 @@ class FilesAdapterKt(entityList: List<FileEntity>?) : RecyclerView.Adapter<Files
                                         holder.itemView.context.getString(R.string.upload_success), Toast.LENGTH_SHORT).show()
                                 Logger.d(content1)
 
-                                MainActivity.selectRepoContent.add(content1)
                                 checkVersion()
                                 notifyDataSetChanged()
                             }, { throwable -> Logger.e("error", throwable) })
@@ -227,7 +231,7 @@ class FilesAdapterKt(entityList: List<FileEntity>?) : RecyclerView.Adapter<Files
             return
         }
         for (data in newDataSet) {
-            val githubContent = MainActivity.getGithubRepoConetnt(data.name)
+            val githubContent = getGithubRepoConetnt(data.name)
             if (githubContent != null) {
                 if (githubContent.sha != GitUtils.gitSHA1(data.absolutePath)) {
                     checkLastUpdateTime(githubContent, dataSet.indexOf(data))
@@ -248,6 +252,10 @@ class FilesAdapterKt(entityList: List<FileEntity>?) : RecyclerView.Adapter<Files
      * @param position
      */
     private fun checkLastUpdateTime(githubContent: RepoContent, position: Int) {
+        if (selectRepo == null) {
+            return
+        }
+
         val entity = dataSet[position]
 
         val sdf = SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ssZ")
@@ -268,6 +276,17 @@ class FilesAdapterKt(entityList: List<FileEntity>?) : RecyclerView.Adapter<Files
                     dataSet[position] = entity
                     notifyDataSetChanged()
                 }, { throwable -> Logger.e("error", throwable) })
+    }
+
+    private fun getGithubRepoConetnt(fileName: String): RepoContent? {
+        if (selectRepoContent != null && selectRepoContent.isNotEmpty()) {
+            for (r in selectRepoContent) {
+                if (fileName == r.name) {
+                    return r
+                }
+            }
+        }
+        return null
     }
 
     override fun getItemCount(): Int {

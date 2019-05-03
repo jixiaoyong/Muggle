@@ -36,7 +36,6 @@ import io.github.jixiaoyong.muggle.AppApplication;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.FileEntity;
 import io.github.jixiaoyong.muggle.R;
-import io.github.jixiaoyong.muggle.activity.MainActivity;
 import io.github.jixiaoyong.muggle.adapter.FilesAdapterKt;
 import io.github.jixiaoyong.muggle.api.bean.Repo;
 import io.github.jixiaoyong.muggle.api.bean.RepoContent;
@@ -92,7 +91,7 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
         viewModel.getLocalFileList().observe(this, new androidx.lifecycle.Observer<List<FileEntity>>() {
             @Override
             public void onChanged(List<FileEntity> fileEntities) {
-                adapter = new FilesAdapterKt(fileEntities);
+                adapter = new FilesAdapterKt(fileEntities, viewModel);
                 dataBinding.fileList.setAdapter(adapter);
                 adapter.checkVersion();
             }
@@ -237,10 +236,6 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
                                 onlineRepoContents.add(r);
                             }
                         }
-
-                        //for old
-                        MainActivity.selectRepoContent.clear();
-                        MainActivity.selectRepoContent.addAll(onlineRepoContents);
 
                         entityList = FileUtils.listFiles(rootPath);
                         viewModel.getLocalFileList().setValue(entityList);

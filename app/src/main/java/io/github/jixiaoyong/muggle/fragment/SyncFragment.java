@@ -33,7 +33,6 @@ import io.github.jixiaoyong.muggle.AppApplication;
 import io.github.jixiaoyong.muggle.Constants;
 import io.github.jixiaoyong.muggle.R;
 import io.github.jixiaoyong.muggle.activity.LoginActivity;
-import io.github.jixiaoyong.muggle.activity.MainActivity;
 import io.github.jixiaoyong.muggle.api.bean.DeleteFileBody;
 import io.github.jixiaoyong.muggle.api.bean.DeleteFileRespone;
 import io.github.jixiaoyong.muggle.api.bean.Repo;
@@ -174,8 +173,6 @@ public class SyncFragment extends Fragment {
                             }
                         }
 
-                        MainActivity.selectRepoContent.clear();
-                        MainActivity.selectRepoContent.addAll(repoContentList);
 
                         viewModel.getSelectRepoContent().setValue(repoContentList);
 
