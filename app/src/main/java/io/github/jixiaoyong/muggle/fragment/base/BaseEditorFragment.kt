@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProviders
 import io.github.jixiaoyong.muggle.R
 import io.github.jixiaoyong.muggle.task.SaveFileTask
+import java.text.SimpleDateFormat
+import java.util.*
 
 abstract class BaseEditorFragment<T : ViewDataBinding, V : ViewModel> : Fragment() {
 
@@ -54,6 +56,7 @@ abstract class BaseEditorFragment<T : ViewDataBinding, V : ViewModel> : Fragment
         val inflater = mContext.layoutInflater
         val view = inflater.inflate(R.layout.dialog_save_file, null)
         val fileNameET = view.findViewById<EditText>(R.id.file_name)
+        fileNameET.setText(generateFileName(currentContent))
 
         saveDialog.setView(view)
         saveDialog.setNeutralButton(R.string.dialog_btn_discard) { dialog, which ->
@@ -63,7 +66,7 @@ abstract class BaseEditorFragment<T : ViewDataBinding, V : ViewModel> : Fragment
         }
         saveDialog.setNegativeButton(R.string.cancel) { dialog, which -> dialog.cancel() }
         saveDialog.setPositiveButton(R.string.dialog_btn_save
-        ) { dialog, which ->
+        ) { _, _ ->
             fileName = fileNameET.text.toString()
             filePath = "$rootPath$fileName.md"
             SaveFileTask(mContext, filePath, fileName,
@@ -86,7 +89,19 @@ abstract class BaseEditorFragment<T : ViewDataBinding, V : ViewModel> : Fragment
         saveDialog.show()
     }
 
-    abstract fun getLayoutId(): Int;
+    private fun generateFileName(str: String?): String {
+        var fileName: String? = null
+        if (str != null) {
+            val content = str.replace(" ", "")
+            fileName = if (content.length <= 7) content else content.substring(0, 7)
+        }
+        if (fileName.isNullOrEmpty()) {
+            fileName = SimpleDateFormat("YYYY-MM-dd-hh-mm-ss", Locale.getDefault()).format(Date()).toString()
+        }
+        return fileName
+    }
+
+    abstract fun getLayoutId(): Int
 
     companion object {
         @JvmStatic
@@ -107,3 +122,5 @@ abstract class BaseEditorFragment<T : ViewDataBinding, V : ViewModel> : Fragment
         protected var rootPath = Environment.getExternalStorageDirectory().toString() + "/\${app_name}/"
     }
 }
+
+

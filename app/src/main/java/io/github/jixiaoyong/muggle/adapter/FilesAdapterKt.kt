@@ -24,9 +24,12 @@ import io.github.jixiaoyong.muggle.fragment.EditorFragment
 import io.github.jixiaoyong.muggle.utils.FileUtils
 import io.github.jixiaoyong.muggle.utils.GitUtils
 import io.github.jixiaoyong.muggle.utils.Logger
+import io.github.jixiaoyong.muggle.utils.SPUtils
 import io.github.jixiaoyong.muggle.viewmodel.MainActivityModel
 import io.github.jixiaoyong.muggle.viewmodel.bean.FileListBean
+import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import okhttp3.Call
 import okhttp3.Callback
@@ -38,12 +41,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class FilesAdapterKt(entityList: List<FileEntity>?, viewModel: MainActivityModel)
+class FilesAdapterKt(entityList: List<FileEntity>?, val viewModel: MainActivityModel)
     : RecyclerView.Adapter<FilesAdapterKt.ViewHolder>() {
 
     private val selectRepo = viewModel.selectRepo.value
     private val userInfo = viewModel.userInfo.value
-    private val selectRepoContent = viewModel.selectRepoContent.value
 
     private val dataSet = entityList?.toMutableList() ?: arrayListOf()
     private var context: AppCompatActivity? = null
@@ -61,6 +63,8 @@ class FilesAdapterKt(entityList: List<FileEntity>?, viewModel: MainActivityModel
         if (position >= dataSet.size) {
             return
         }
+
+        Logger.d("dataSet:${dataSet[position].name},${dataSet[position].isSynced}")
 
         val entity = dataSet[position]
         val fileName = entity.name
@@ -164,7 +168,7 @@ class FilesAdapterKt(entityList: List<FileEntity>?, viewModel: MainActivityModel
                                 .subscribe({ (_, content1) ->
                                     Toast.makeText(holder.itemView.context,
                                             holder.itemView.context.getString(R.string.upgrade_success), Toast.LENGTH_SHORT).show()
-                                    Logger.d(content1)
+                                    Logger.d("update file$content1")
                                     checkVersion()
                                     notifyDataSetChanged()
                                 }, { throwable -> Logger.e("error", throwable) })
@@ -211,8 +215,9 @@ class FilesAdapterKt(entityList: List<FileEntity>?, viewModel: MainActivityModel
                             .subscribe({ (_, content1) ->
                                 Toast.makeText(holder.itemView.context,
                                         holder.itemView.context.getString(R.string.upload_success), Toast.LENGTH_SHORT).show()
-                                Logger.d(content1)
+                                Logger.d("create file$content1")
 
+                                refreshGitHubRepo()
                                 checkVersion()
                                 notifyDataSetChanged()
                             }, { throwable -> Logger.e("error", throwable) })
@@ -224,7 +229,50 @@ class FilesAdapterKt(entityList: List<FileEntity>?, viewModel: MainActivityModel
 
     }
 
+    private fun refreshGitHubRepo() {
+        val repo = viewModel.selectRepo.value
+        if (repo == null) {
+            Logger.d("selectRepo==null,return")
+            return
+        }
+        AppApplication.githubApiService.getUserRepoContent(repo.owner.login,
+                repo.name, "")
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.newThread())
+                .subscribe(object : Observer<Array<RepoContent>> {
+                    override fun onSubscribe(d: Disposable) {
+
+                    }
+
+                    override fun onNext(repoContents: Array<RepoContent>) {
+                        val onlineRepoContents = java.util.ArrayList<RepoContent>()
+                        for (r in repoContents) {
+                            if ("file" == r.type && r.name.toLowerCase().endsWith(".md")) {
+                                onlineRepoContents.add(r)
+                            }
+                        }
+
+                        viewModel.selectRepoContent.setValue(onlineRepoContents)
+                        Logger.d("got contents size" + onlineRepoContents.size)
+                    }
+
+                    override fun onError(e: Throwable) {
+                        Logger.e("get onError", e)
+                        Constants.token = ""
+                        SPUtils.putString(Constants.KEY_OAUTH2_TOKEN, Constants.token)
+
+                        viewModel.token.setValue("")
+                    }
+
+                    override fun onComplete() {
+                        Logger.d("get end")
+                    }
+                })
+    }
+
+
     fun checkVersion() {
+        Logger.d("checkVersion()")
         val newDataSet = ArrayList<FileEntity>()
         newDataSet.addAll(dataSet)
         if (newDataSet.size <= 0) {
@@ -232,6 +280,7 @@ class FilesAdapterKt(entityList: List<FileEntity>?, viewModel: MainActivityModel
         }
         for (data in newDataSet) {
             val githubContent = getGithubRepoConetnt(data.name)
+            Logger.d("checkVersion: getGithubRepoConetnt()" + data.name + " $githubContent")
             if (githubContent != null) {
                 if (githubContent.sha != GitUtils.gitSHA1(data.absolutePath)) {
                     checkLastUpdateTime(githubContent, dataSet.indexOf(data))
@@ -279,8 +328,9 @@ class FilesAdapterKt(entityList: List<FileEntity>?, viewModel: MainActivityModel
     }
 
     private fun getGithubRepoConetnt(fileName: String): RepoContent? {
-        if (selectRepoContent != null && selectRepoContent.isNotEmpty()) {
-            for (r in selectRepoContent) {
+        Logger.d("getGithubRepoConetnt:viewModel.selectRepoContent.value${viewModel.selectRepoContent.value?.size}")
+        if (viewModel.selectRepoContent.value != null && viewModel.selectRepoContent.value!!.isNotEmpty()) {
+            for (r in viewModel.selectRepoContent.value!!) {
                 if (fileName == r.name) {
                     return r
                 }

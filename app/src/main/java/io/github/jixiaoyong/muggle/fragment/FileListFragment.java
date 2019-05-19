@@ -63,7 +63,6 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
     private String rootPath;
 
     private FilesAdapterKt adapter;
-    private List<FileEntity> entityList;
     private List<FileEntity> beforeSearch;
 
     private SharedPreferences sharedPreferences;
@@ -80,7 +79,7 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
         initVar(); // init variable
         setFab(); // set floating action button
         setHasOptionsMenu(true); // set has options menu
-        setDrawerToggle(); // set toggle for drawerlayout
+        setDrawerToggle(); // set toggle for drawer layout
         setNavigationViewItemListener(); // set navigation view item listener
 
         dataBinding.fileList.setLayoutManager(new LinearLayoutManager(compatActivity));
@@ -91,8 +90,16 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
         viewModel.getLocalFileList().observe(this, new androidx.lifecycle.Observer<List<FileEntity>>() {
             @Override
             public void onChanged(List<FileEntity> fileEntities) {
+                Logger.d("getLocalFileList update list");
                 adapter = new FilesAdapterKt(fileEntities, viewModel);
                 dataBinding.fileList.setAdapter(adapter);
+                adapter.checkVersion();
+            }
+        });
+        viewModel.getSelectRepoContent().observe(this, new androidx.lifecycle.Observer<List<RepoContent>>() {
+            @Override
+            public void onChanged(List<RepoContent> repoContents) {
+                Logger.d("getSelectRepoContent update list");
                 adapter.checkVersion();
             }
         });
@@ -104,6 +111,7 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
         } else {
             refreshLocalFileList(); // set recyclerview
         }
+
         setSwipeRefreshLayout(); // set swipe refresh layout
     }
 
@@ -187,7 +195,7 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
 
     private void refreshLocalFileList() {
         if (StorageHelper.isExternalStorageReadable()) {
-            entityList = FileUtils.listFiles(rootPath);
+            List<FileEntity> entityList = FileUtils.listFiles(rootPath);
             viewModel.getLocalFileList().setValue(entityList);
         } else {
             Toast.makeText(compatActivity, R.string.toast_message_sdcard_unavailable,
@@ -237,10 +245,9 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
                             }
                         }
 
-                        entityList = FileUtils.listFiles(rootPath);
+                        List<FileEntity> entityList = FileUtils.listFiles(rootPath);
                         viewModel.getLocalFileList().setValue(entityList);
                         viewModel.getSelectRepoContent().setValue(onlineRepoContents);
-
                         Logger.d("got contents size" + onlineRepoContents.size());
                     }
 
@@ -251,7 +258,6 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
                         SPUtils.putString(Constants.KEY_OAUTH2_TOKEN, Constants.token);
 
                         viewModel.getToken().setValue("");
-
                         refreshLocalFileList();
                     }
 
@@ -306,12 +312,11 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
                 if (!TextUtils.isEmpty(query)) {
                     // search files
                     if (StorageHelper.isExternalStorageReadable()) {
-                        beforeSearch = new ArrayList<>(entityList);
+                        beforeSearch = new ArrayList<>(viewModel.getLocalFileList().getValue());
                         new QueryTask(rootPath, query, new QueryTask.Response() {
                             @Override
                             public void onTaskFinish(List<FileEntity> entityList) {
-                                FileListFragment.this.entityList.clear();
-                                FileListFragment.this.entityList.addAll(entityList);
+                                viewModel.getLocalFileList().setValue(entityList);
                                 adapter.notifyDataSetChanged();
                             }
                         }).execute();
@@ -336,10 +341,8 @@ public class FileListFragment extends BaseFragment<FragmentFilelistBinding, Main
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                if (entityList != null && adapter != null && beforeSearch != null) {
-                    entityList.clear();
-                    entityList.addAll(beforeSearch);
-                    adapter.notifyDataSetChanged();
+                if (viewModel.getLocalFileList().getValue() != null && adapter != null && beforeSearch != null) {
+                    viewModel.getLocalFileList().setValue(beforeSearch);
                 }
                 return true;
             }
