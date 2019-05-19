@@ -20,7 +20,7 @@ buildscript {
         lifecycleVersion = '2.0.0'
         navigationVersion = '1.0.0-alpha09'
         recyclerViewVersion = '1.0.0'
-        roomVersion = '2.1.0-alpha06'
+        roomVersion = '2.1.0-beta01'
         workVersion = '1.0.0-beta01'
     }
     repositories {

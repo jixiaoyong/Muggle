@@ -5,7 +5,7 @@ apply plugin: 'kotlin-kapt'
 
 import java.text.SimpleDateFormat
 
-static String getReleaseDate(){
+static String getReleaseDate() {
     return new SimpleDateFormat("yyyyMMdd").format(new Date())
 }
 
